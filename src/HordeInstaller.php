@@ -15,15 +15,15 @@ class HordeInstaller extends LibraryInstaller
         switch ($package->getType())
         {
             case 'horde-application':
-                return 'horde-dir/apps/' . $package->getPrettyName();
+                return $package->getPrettyName();
             break;
             case 'horde-library':
-                return 'horde-dir/libs/' . $package->getPrettyName();
+                return 'libs/' . $package->getPrettyName();
             break;
             case 'horde-theme':
-                return 'horde-dir/themes/' . $package->getPrettyName();
+                return 'themes/ . $package->getPrettyName();
             break;
-            return 'not-found/';
+            return 'not-found/' . $package->getPrettyName();
         }
     }
 
