@@ -3,7 +3,7 @@
     "type": "composer-plugin",
     "license": "MIT",
     "autoload": {
-        "psr-0": {"Horde\\Composer\\": "src/"}
+        "psr-4": {"Horde\\Composer\\": "src/"}
     },
     "extra": {
         "class": "Horde\\Composer\\HordeInstallerPlugin"
