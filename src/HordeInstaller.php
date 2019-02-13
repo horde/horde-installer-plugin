@@ -15,8 +15,8 @@ class HordeInstaller extends LibraryInstaller
         switch ($package->getType())
         {
             case 'horde-application':
-                if ($package->getName() == 'horde') {
-                    return 'horde-dir/hordebase/' . $package->getName();
+                if ($package->getName() == 'horde/horde') {
+                    return 'horde-dir/';
                 }
                 return 'horde-dir/apps/' . $package->getPrettyName();
             break;
