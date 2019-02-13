@@ -12,7 +12,7 @@ class HordeInstaller extends LibraryInstaller
      */
     public function getInstallPath(PackageInterface $package)
     {
-        switch ($packageType)
+        switch ($package->getType())
         {
             case 'horde-application':
                 if ($package->getName() == 'horde') {
