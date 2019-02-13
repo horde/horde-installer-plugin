@@ -21,7 +21,7 @@ class HordeInstaller extends LibraryInstaller
                 return 'libs/' . $package->getPrettyName();
             break;
             case 'horde-theme':
-                return 'themes/ . $package->getPrettyName();
+                return 'themes/' . $package->getPrettyName();
             break;
             return 'not-found/' . $package->getPrettyName();
         }
