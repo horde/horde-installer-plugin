@@ -10,7 +10,7 @@ class HordeInstaller extends LibraryInstaller
     /**
      * {@inheritDoc}
      */
-    public function getInstallPath(PackageInterface $package)
+    public function getInstallPath(\Composer\Package\PackageInterface $package)
     {
         switch ($package->getType())
         {
@@ -33,19 +33,19 @@ class HordeInstaller extends LibraryInstaller
         // Type horde-application needs a config/horde.local.php pointing to horde dir
         if ($package->getType() == 'horde-application')
         {
-            $hordeLocalFilePath = $package->getInstallDir() . '/config/horde.local.php';
+            $hordeLocalFilePath = $this->getInstallPath($package) . '/config/horde.local.php';
             $hordeLocalFileContent = sprintf("<?php if (!defined('HORDE_BASE')) define('HORDE_BASE'', '%s');",
-                dirname($package->getInstallDir(), 2) . '/horde/horde/' );
+                dirname($this->getInstallPath($package), 2) . '/horde/horde/' );
             // special case horde/horde needs to require the composer autoloader
             if ($package->getName() == 'horde/horde') {
                 $hordeLocalFileContent .= 'require_once(\'$this->vendorDir/autoload.php\');';
                 // ensure a registry.local.php exists. If not, create one containing only fileroot
-                $registryLocalFilePath = $package->getInstallDir() . '/config/registry.local.php';
+                $registryLocalFilePath = $this->getInstallPath($package) . '/config/registry.local.php';
                 if (!file_exists($registryLocalFilePath))
                 {
                     $registryLocalFileContent = sprintf(
                         "<?php\n\$app_fileroot = '%s';\n// \$app_webroot = \$this->detectWebroot()\n",
-                        $package->getInstallDir()
+                        $this->getInstallPath($package)
                     );
                     file_put_contents($registryLocalFilePath, $registryLocalFileContent);
                 }
