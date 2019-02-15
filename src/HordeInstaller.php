@@ -27,7 +27,7 @@ class HordeInstaller extends LibraryInstaller
         }
     }
 
-    public function install(Composer\Repository\InstalledRepositoryInterface $repo, Composer\Package\PackageInterface $package)
+    public function install(\Composer\Repository\InstalledRepositoryInterface $repo, \Composer\Package\PackageInterface $package)
     {
         parent::install($repo, $package);
         // Type horde-application needs a config/horde.local.php pointing to horde dir
