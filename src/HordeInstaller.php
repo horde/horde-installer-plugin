@@ -80,8 +80,8 @@ class HordeInstaller extends LibraryInstaller
             } else {
                 // A registry snippet should ensure the install dir is known
                 list(, $app) = explode('/', $package->getName(), 2);
-                $registryAppSnippet = '<?php $registry->applications[\'' . $app . '\'][\'fileroot\'] = $app_fileroot . \'/../\'' . $app . '\';';
-                $registryAppFilename = realpath(dirname($this->getInstallPath($package), 2) . '/horde/horde/config/registry.d/location-' . $app . '.php');
+                $registryAppSnippet = '<?php $registry->applications[\'' . $app . '\'][\'fileroot\'] = $app_fileroot . \'/../' . $app . '\';';
+                $registryAppFilename = dirname($this->getInstallPath($package), 2) . '/horde/horde/config/registry.d/location-' . $app . '.php';
                 file_put_contents($registryAppFilename, $registryAppSnippet);
             }
             file_put_contents($hordeLocalFilePath, $hordeLocalFileContent);
