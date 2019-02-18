@@ -2,6 +2,7 @@
 
 namespace Horde\Composer;
 
+use Composer\Repository\InstalledRepositoryInterface;
 use Composer\Package\PackageInterface;
 use Composer\Installer\LibraryInstaller;
 
@@ -10,7 +11,7 @@ class HordeInstaller extends LibraryInstaller
     /**
      * {@inheritDoc}
      */
-    public function getInstallPath(\Composer\Package\PackageInterface $package)
+    public function getInstallPath(PackageInterface $package)
     {
         switch ($package->getType())
         {
@@ -30,7 +31,7 @@ class HordeInstaller extends LibraryInstaller
     /**
      * {@inheritDoc}
      */
-    public function install(\Composer\Repository\InstalledRepositoryInterface $repo, \Composer\Package\PackageInterface $package)
+    public function install(InstalledRepositoryInterface $repo, PackageInterface $package)
     {
         parent::install($repo, $package);
         $this->postinstall($repo, $package);
@@ -51,7 +52,7 @@ class HordeInstaller extends LibraryInstaller
      * @param \Composer\Repository\InstalledRepositoryInterface $repo  The repository
      * @param \Composer\Package\PackageInterface $package  The package installed or updated
      */
-    protected function postinstall(\Composer\Repository\InstalledRepositoryInterface $repo, \Composer\Package\PackageInterface $package)
+    protected function postinstall(InstalledRepositoryInterface $repo, PackageInterface $package)
     {
         // Type horde-application needs a config/horde.local.php pointing to horde dir
         // If a horde-application has a registry snippet in doc-dir, fetch it and put it into config/registry.d
