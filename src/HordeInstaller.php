@@ -63,9 +63,9 @@ class HordeInstaller extends LibraryInstaller
             $hordeLocalFilePath = $this->getInstallPath($package) . '/config/horde.local.php';
             $hordeLocalFileContent = sprintf("<?php if (!defined('HORDE_BASE')) define('HORDE_BASE', '%s');",
                 realpath(dirname($this->getInstallPath($package), 2) . '/horde/horde/') );
-            $hordeLocalFileContent .= $this->_legacyWorkaround($this->getInstallPath($package));
             // special case horde/horde needs to require the composer autoloader
             if ($package->getName() == 'horde/horde') {
+                $hordeLocalFileContent .= $this->_legacyWorkaround(realpath($this->getInstallPath($package)));
                 $hordeLocalFileContent .= 'require_once(\'' . $this->vendorDir .'/autoload.php\');';
                 // ensure a registry.local.php exists. If not, create one containing only fileroot
                 $registryLocalFilePath = $this->getInstallPath($package) . '/config/registry.local.php';
@@ -85,7 +85,7 @@ class HordeInstaller extends LibraryInstaller
     // Work around case inconsistencies, hard requires etc until they are resolved in code
     protected function _legacyWorkaround($path)
     {
-        return sprintf("ini_set('include_path', '%s/vendor/horde/autoloader/lib%s%s/vendor/horde/form/lib/%s' .  ini_get('include_path');
+        return sprintf("ini_set('include_path', '%s/vendor/horde/autoloader/lib%s%s/vendor/horde/form/lib/%s' .  ini_get('include_path'));
         require_once('%s/vendor/horde/core/lib/Horde/Core/Nosql.php');
         ",
             $path,
