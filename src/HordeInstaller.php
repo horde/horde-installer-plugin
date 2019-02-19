@@ -69,9 +69,6 @@ class HordeInstaller extends LibraryInstaller
             if ($package->getName() == 'horde/horde') {
                 $hordeLocalFileContent .= $this->_legacyWorkaround(realpath($this->vendorDir));
                 $hordeLocalFileContent .= 'require_once(\'' . $this->vendorDir .'/autoload.php\');';
-                $hordeLocalFileContent .= 
-                '$this->applications[\'horde\'][\'jsfs\'] = $this->applications[\'horde\'][\'fileroot\'] . \'/../js/horde/\';
-                $this->applications[\'horde\'][\'jsuri\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../js/horde/\';';
 
                 // ensure a registry.local.php exists. If not, create one containing only fileroot
                 $registryLocalFilePath = $this->getInstallPath($package) . '/config/registry.local.php';
@@ -81,6 +78,10 @@ class HordeInstaller extends LibraryInstaller
                         "<?php\n\$app_fileroot = '%s';\n// \$app_webroot = \$this->detectWebroot();\n",
                         realpath($this->getInstallPath($package))
                     );
+                    $registryLocalFileContent .= 
+                    '$this->applications[\'horde\'][\'jsfs\'] = $this->applications[\'horde\'][\'fileroot\'] . \'/../js/horde/\';' .
+                    '$this->applications[\'horde\'][\'jsuri\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../js/horde/\';';
+
                     file_put_contents($registryLocalFilePath, $registryLocalFileContent);
                 }
             } else {
