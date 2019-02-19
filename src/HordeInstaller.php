@@ -5,6 +5,7 @@ namespace Horde\Composer;
 use Composer\Repository\InstalledRepositoryInterface;
 use Composer\Package\PackageInterface;
 use Composer\Installer\LibraryInstaller;
+use Composer\Util\Filesystem;
 
 class HordeInstaller extends LibraryInstaller
 {
@@ -57,9 +58,10 @@ class HordeInstaller extends LibraryInstaller
         // Type horde-application needs a config/horde.local.php pointing to horde dir
         // If a horde-application has a registry snippet in doc-dir, fetch it and put it into config/registry.d
         // horde-library needs to check for js/ to copy or link
-
+        list($vendor, $app) = explode('/', $package->getName(), 2);
         if ($package->getType() == 'horde-application')
         {
+            $this->linkJavaScript($package, $app);
             $hordeLocalFilePath = $this->getInstallPath($package) . '/config/horde.local.php';
             $hordeLocalFileContent = sprintf("<?php if (!defined('HORDE_BASE')) define('HORDE_BASE', '%s');",
                 realpath(dirname($this->getInstallPath($package), 2) . '/horde/horde/') );
@@ -79,7 +81,6 @@ class HordeInstaller extends LibraryInstaller
                 }
             } else {
                 // A registry snippet should ensure the install dir is known
-                list(, $app) = explode('/', $package->getName(), 2);
                 $registryAppFilename = dirname($this->getInstallPath($package), 2) . '/horde/horde/config/registry.d/location-' . $app . '.php';
                 // TODO: Is using a hardcoded path instead faster or better?
                 $registryAppSnippet = '<?php $this->applications[\'' . $app . '\'][\'fileroot\'] = dirname(__FILE__, 4) . \'/' . $app . '\';';
@@ -87,6 +88,36 @@ class HordeInstaller extends LibraryInstaller
             }
             file_put_contents($hordeLocalFilePath, $hordeLocalFileContent);
         }
+        // horde-library needs to check for js/ to copy or link
+        if ($package->getType() == 'horde-library')
+        {
+            $this->linkJavaScript($package);
+        }
+    }
+
+    public function linkJavaScript($package, $app = 'horde')
+    {
+        $jsDir = $this->getInstallPath($package) . '/js/';
+        // TODO: Error handling
+        if (!is_dir($jsDir)) {
+            return;
+        }
+        try {
+            $jsDirHandle = opendir($jsDir);
+        } catch (ErrorException $e) {
+            return;
+        }
+        $projectRoot = realpath(dirname(\Composer\Factory::getComposerFile()));
+        $targetDir = $projectRoot . '/horde/js/' . $app;
+        $this->filesystem->ensureDirectoryExists($targetDir);
+        while (false !== ($sourceItem = readdir($jsDirHandle))) {
+            if ($sourceItem == '.' || $sourceItem == '..')
+            {
+                continue;
+            }
+            $this->filesystem->relativeSymlink(realpath("$jsDir/$sourceItem"),  "$targetDir/$sourceItem");
+        }
+        closedir($jsDirHandle);
     }
 
     // Work around case inconsistencies, hard requires etc until they are resolved in code
