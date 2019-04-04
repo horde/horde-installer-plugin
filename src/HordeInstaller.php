@@ -70,18 +70,18 @@ class HordeInstaller extends LibraryInstaller
                 $hordeLocalFileContent .= $this->_legacyWorkaround(realpath($this->vendorDir));
                 $hordeLocalFileContent .= 'require_once(\'' . $this->vendorDir .'/autoload.php\');';
 
-                // ensure a registry.local.php exists. If not, create one containing only fileroot
-                $registryLocalFilePath = $this->getInstallPath($package) . '/config/registry.local.php';
+                // ensure a registry snippet for base exists. If not, create one containing only fileroot
+                $registryLocalFilePath = $this->getInstallPath($package) . '/config/registry.d/00-horde.php';
                 if (!file_exists($registryLocalFilePath))
                 {
                     $registryLocalFileContent = sprintf(
-                        "<?php\n\$app_fileroot = '%s';\n// \$app_webroot = \$this->detectWebroot();\n",
+                        "<?php\n\$app_fileroot = '%s';\n
+                         \$app_webroot = '/horde';\n",
                         realpath($this->getInstallPath($package))
                     );
-                    $registryLocalFileContent .= 
+                    $registryLocalFileContent .=
                     '$this->applications[\'horde\'][\'jsfs\'] = $this->applications[\'horde\'][\'fileroot\'] . \'/../js/horde/\';' .
                     '$this->applications[\'horde\'][\'jsuri\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../js/horde/\';';
-
                     file_put_contents($registryLocalFilePath, $registryLocalFileContent);
                 }
             } else {
@@ -92,9 +92,13 @@ class HordeInstaller extends LibraryInstaller
                 $registryAppSnippet = '<?php ' .
                   '$this->applications[\'' . $app . '\'][\'fileroot\'] = dirname(__FILE__, 4) . \'/' . $app . '\';' .
                   '$this->applications[\'' . $app . '\'][\'webroot\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../' . $app . '\';';
-                file_put_contents($registryAppFilename, $registryAppSnippet);
+                if (!file_exists($registryAppFilename)) {
+                    file_put_contents($registryAppFilename, $registryAppSnippet);
+                }
             }
-            file_put_contents($hordeLocalFilePath, $hordeLocalFileContent);
+            if (!file_exists($hordeLocalFilePath)) {
+                file_put_contents($hordeLocalFilePath, $hordeLocalFileContent);
+            }
         }
         // horde-library needs to check for js/ to copy or link
         if ($package->getType() == 'horde-library')
