@@ -66,6 +66,12 @@ class HordeInstaller extends LibraryInstaller
             $hordeLocalFileContent = sprintf("<?php if (!defined('HORDE_BASE')) define('HORDE_BASE', '%s');",
                 realpath(dirname($this->getInstallPath($package), 2) . '/horde/horde/') );
             // special case horde/horde needs to require the composer autoloader
+
+            if ($package->getName() == 'horde/components') {
+                // special case -  a horde app which does not need horde.
+                // Do we need to generalize this for other standalone cases?
+                return;
+            }
             if ($package->getName() == 'horde/horde') {
                 $hordeLocalFileContent .= $this->_legacyWorkaround(realpath($this->vendorDir));
                 $hordeLocalFileContent .= 'require_once(\'' . $this->vendorDir .'/autoload.php\');';
