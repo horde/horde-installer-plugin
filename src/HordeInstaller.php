@@ -10,30 +10,46 @@ use Composer\Util\Filesystem;
 class HordeInstaller extends LibraryInstaller
 {
 
+    protected $projectRoot = '';
+    protected $webDir = '';
+    protected $jsDir = '';
+    protected $hordeDir = '';
+    protected $packageDir = '';
+    protected $packageName = '';
+    protected $vendorName = '';
 
-    const WEBDIR = dirname(__FILE__, 4) . '/web';
-    const HORDEDIR = self::WEBDIR . '/horde';
+
+    protected function _setupDirs(PackageInterface $package)
+    {
+        $this->projectRoot = realpath(dirname(\Composer\Factory::getComposerFile()));
+        $this->webDir = $this->projectRoot . '/web';
+        $this->hordeDir = $this->webDir . '/horde';
+        $this->jsDir = $this->webDir . '/js';
+        list($this->vendorName, $this->packageName) = explode('/', $package->getName(), 2);
+
+        switch ($package->getType())
+        {
+            case 'horde-application':
+                $this->packageDir = $this->webDir . '/' . $appName;
+            break;
+            case 'horde-theme':
+                $this->packageDir = $this->webDir . '/themes/' . $package->getPrettyName();
+            break;
+            case 'horde-library':
+            default:
+                $this->packageDir = parent::getInstallPath($package);
+            break;
+        }
+
+    }
+
     /**
      * {@inheritDoc}
      */
     public function getInstallPath(PackageInterface $package)
     {
-        list($vendorName, $appName) = explode('/', $package->getName(), 2);
-        switch ($package->getType())
-        {
-            case 'horde-application':
-                return self::WEBDIR . '/' . $appName;
-            break;
-            case 'horde-theme':
-                return 'themes/' . $package->getPrettyName();
-            break;
-            case 'horde-library':
-            default:
-                return parent::getInstallPath($package);
-            break;
-        }
-        // Should never be reached?
-        return 'not-found/' . $package->getPrettyName();
+        $this->_setupDirs($package);
+        return $this->packageDir;
     }
 
     /**
@@ -62,16 +78,16 @@ class HordeInstaller extends LibraryInstaller
      */
     protected function postinstall(InstalledRepositoryInterface $repo, PackageInterface $package)
     {
+        $this->_setupDirs($package);
         // Type horde-application needs a config/horde.local.php pointing to horde dir
         // If a horde-application has a registry snippet in doc-dir, fetch it and put it into config/registry.d
         // horde-library needs to check for js/ to copy or link
-        list($vendor, $app) = explode('/', $package->getName(), 2);
         if ($package->getType() == 'horde-application')
         {
-            $this->linkJavaScript($package, $app);
-            $hordeLocalFilePath = $this->getInstallPath($package) . '/config/horde.local.php';
+            $this->linkJavaScript($package, $this->packageName);
+            $hordeLocalFilePath = $this->hordeDir . '/config/horde.local.php';
             $hordeLocalFileContent = sprintf("<?php if (!defined('HORDE_BASE')) define('HORDE_BASE', '%s');\n",
-            realpath(dirname($this->getInstallPath($package), 2) . self::HORDEDIR . '/') );
+            realpath(dirname($this->getInstallPath($package), 2) . $this->hordeDir . '/') );
             // special case horde/horde needs to require the composer autoloader
 
             if ($package->getName() == 'horde/components') {
@@ -84,7 +100,7 @@ class HordeInstaller extends LibraryInstaller
                 $hordeLocalFileContent .= 'require_once(\'' . $this->vendorDir .'/autoload.php\');';
 
                 // ensure a registry snippet for base exists. If not, create one containing only fileroot
-                $registryLocalFilePath = $this->getInstallPath($package) . '/config/registry.d/00-horde.php';
+                $registryLocalFilePath = $this->hordeDir . '/config/registry.d/00-horde.php';
                 if (!file_exists($registryLocalFilePath))
                 {
                     $registryLocalFileContent = sprintf(
@@ -99,7 +115,7 @@ class HordeInstaller extends LibraryInstaller
                 }
             } else {
                 // A registry snippet should ensure the install dir is known
-                $registryDir = dirname($this->getInstallPath($package), 2) . '/horde/horde/config/registry.d';
+                $registryDir = $this->hordeDir . '/config/registry.d';
                 if (!is_dir($registryDir)) {
                     mkdir($registryDir, 0775, true);
                 }
@@ -126,25 +142,24 @@ class HordeInstaller extends LibraryInstaller
 
     public function linkJavaScript($package, $app = 'horde')
     {
-        $jsDir = $this->getInstallPath($package) . '/js/';
+        $packageJsDir = $this->getInstallPath($package) . '/js/';
         // TODO: Error handling
         if (!is_dir($jsDir)) {
             return;
         }
         try {
-            $jsDirHandle = opendir($jsDir);
+            $jsDirHandle = opendir($packageJsDir);
         } catch (ErrorException $e) {
             return;
         }
-        $projectRoot = realpath(dirname(\Composer\Factory::getComposerFile()));
-        $targetDir = $projectRoot . self::WEBDIR . '/js/' . $app;
+        $targetDir = $this->jsDir . '/' . $app;
         $this->filesystem->ensureDirectoryExists($targetDir);
         while (false !== ($sourceItem = readdir($jsDirHandle))) {
             if ($sourceItem == '.' || $sourceItem == '..')
             {
                 continue;
             }
-            $this->filesystem->relativeSymlink(realpath("$jsDir/$sourceItem"),  "$targetDir/$sourceItem");
+            $this->filesystem->relativeSymlink(realpath("$packageJsDir/$sourceItem"),  "$targetDir/$sourceItem");
         }
         closedir($jsDirHandle);
     }
