@@ -144,7 +144,7 @@ class HordeInstaller extends LibraryInstaller
     {
         $packageJsDir = $this->getInstallPath($package) . '/js/';
         // TODO: Error handling
-        if (!is_dir($jsDir)) {
+        if (!is_dir($packageJsDir)) {
             return;
         }
         try {
