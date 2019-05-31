@@ -79,6 +79,7 @@ class HordeInstaller extends LibraryInstaller
     protected function postinstall(InstalledRepositoryInterface $repo, PackageInterface $package)
     {
         $this->_setupDirs($package);
+        $app = $this->packageName;
         // Type horde-application needs a config/horde.local.php pointing to horde dir
         // If a horde-application has a registry snippet in doc-dir, fetch it and put it into config/registry.d
         // horde-library needs to check for js/ to copy or link
