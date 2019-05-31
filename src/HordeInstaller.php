@@ -105,8 +105,8 @@ class HordeInstaller extends LibraryInstaller
                 if (!file_exists($registryLocalFilePath))
                 {
                     $registryLocalFileContent = sprintf(
-                        "<?php\n\$app_fileroot = '%s';\n
-                         \$app_webroot = '/horde';\n",
+                        "<?php\n\$app_fileroot = '%s';\n" .
+                        "\$app_webroot = '/horde';\n",
                         realpath($this->getInstallPath($package))
                     );
                     $registryLocalFileContent .=
@@ -123,7 +123,7 @@ class HordeInstaller extends LibraryInstaller
                 $registryAppFilename = $registryDir . '/location-' . $app . '.php';
                 // TODO: Do not overwrite user-provided files
                 // TODO: If the app provides an own snippet in /doc/, amend
-                $registryAppSnippet = '<?php ' . PHP_EOL .
+                $registryAppSnippet = '<?php' . PHP_EOL .
                   '$this->applications[\'' . $app . '\'][\'fileroot\'] = dirname(__FILE__, 4) . \'/' . $app . '\';' . PHP_EOL .
                   '$this->applications[\'' . $app . '\'][\'webroot\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../' . $app . '\';';
                 if (!file_exists($registryAppFilename)) {
