@@ -86,9 +86,9 @@ class HordeInstaller extends LibraryInstaller
         if ($package->getType() == 'horde-application')
         {
             $this->linkJavaScript($package, $this->packageName);
-            $hordeLocalFilePath = $this->hordeDir . '/config/horde.local.php';
+            $hordeLocalFilePath = $this->packageDir . '/config/horde.local.php';
             $hordeLocalFileContent = sprintf("<?php if (!defined('HORDE_BASE')) define('HORDE_BASE', '%s');\n",
-            realpath(dirname($this->getInstallPath($package), 2) . $this->hordeDir . '/') );
+            realpath( $this->hordeDir ));
             // special case horde/horde needs to require the composer autoloader
 
             if ($package->getName() == 'horde/components') {
@@ -123,8 +123,8 @@ class HordeInstaller extends LibraryInstaller
                 $registryAppFilename = $registryDir . '/location-' . $app . '.php';
                 // TODO: Do not overwrite user-provided files
                 // TODO: If the app provides an own snippet in /doc/, amend
-                $registryAppSnippet = '<?php ' .
-                  '$this->applications[\'' . $app . '\'][\'fileroot\'] = dirname(__FILE__, 4) . \'/' . $app . '\';' .
+                $registryAppSnippet = '<?php ' . PHP_EOL .
+                  '$this->applications[\'' . $app . '\'][\'fileroot\'] = dirname(__FILE__, 4) . \'/' . $app . '\';' . PHP_EOL .
                   '$this->applications[\'' . $app . '\'][\'webroot\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../' . $app . '\';';
                 if (!file_exists($registryAppFilename)) {
                     file_put_contents($registryAppFilename, $registryAppSnippet);
