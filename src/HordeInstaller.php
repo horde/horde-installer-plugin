@@ -30,7 +30,7 @@ class HordeInstaller extends LibraryInstaller
         switch ($package->getType())
         {
             case 'horde-application':
-                $this->packageDir = $this->webDir . '/' . $appName;
+                $this->packageDir = $this->webDir . '/' . $this->packageName;
             break;
             case 'horde-theme':
                 $this->packageDir = $this->webDir . '/themes/' . $package->getPrettyName();
