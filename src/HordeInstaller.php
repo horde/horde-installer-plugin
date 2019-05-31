@@ -11,7 +11,7 @@ class HordeInstaller extends LibraryInstaller
 {
 
 
-    const WEBDIR = '/web';
+    const WEBDIR = dirname(__FILE__, 4) . '/web';
     const HORDEDIR = self::WEBDIR . '/horde';
     /**
      * {@inheritDoc}
