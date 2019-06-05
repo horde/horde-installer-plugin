@@ -6,7 +6,11 @@ use Composer\Repository\InstalledRepositoryInterface;
 use Composer\Package\PackageInterface;
 use Composer\Installer\LibraryInstaller;
 use Composer\Util\Filesystem;
-
+/**
+ * Installer implementation for horde apps and themes 
+ *
+ * @author Ralf Lang <lang@b1-systems.de>
+ */
 class HordeInstaller extends LibraryInstaller
 {
 
