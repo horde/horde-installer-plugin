@@ -139,8 +139,6 @@ class HordeInstaller extends LibraryInstaller
                     mkdir($registryDir, 0775, true);
                 }
                 $registryAppFilename = $registryDir . '/location-' . $app . '.php';
-                // TODO: Do not overwrite user-provided files
-                // TODO: If the app provides an own snippet in /doc/, amend
                 $registryAppSnippet = '<?php' . PHP_EOL .
                   '$this->applications[\'' . $app . '\'][\'fileroot\'] = dirname(__FILE__, 4) . \'/' . $app . '\';' . PHP_EOL .
                   '$this->applications[\'' . $app . '\'][\'webroot\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../' . $app . '\';';
