@@ -1,38 +1,45 @@
 <?php
-
 namespace Horde\Composer;
-
 use Composer\Repository\InstalledRepositoryInterface;
 use Composer\Package\PackageInterface;
 use Composer\Installer\LibraryInstaller;
 use Composer\Util\Filesystem;
 /**
- * Installer implementation for horde apps and themes 
+ * Installer implementation for horde apps and themes
  *
  * @author Ralf Lang <lang@b1-systems.de>
  */
 class HordeInstaller extends LibraryInstaller
 {
-
     protected $projectRoot = '';
     protected $webDir = '';
+    /**
+     * @protected string $presetDir
+     *
+     * A location to look for preset files in the deployment
+     */
+    protected $presetDir = '';
     protected $jsDir = '';
     protected $hordeDir = '';
+    protected $hordeRegistryDir = '';
     protected $packageDir = '';
+    /**
+     * A location to look for package-supplied registry snippets
+     * This is useful for custom apps
+     */
+    protected $packageDocRegistryDir = '';
     protected $packageName = '';
     protected $vendorName = '';
-
-
     protected function _setupDirs(PackageInterface $package)
     {
         $this->projectRoot = realpath(dirname(\Composer\Factory::getComposerFile()));
+        $this->presetDir = $this->projectRoot . '/presets';
         $this->webDir = $this->projectRoot . '/web';
         $this->hordeDir = $this->webDir . '/horde';
+        $this->hordeRegistryDir = $this->hordeDir . '/config/registry.d/';
         $this->jsDir = $this->webDir . '/js';
         list($this->vendorName, $this->packageName) = explode('/', $package->getName(), 2);
-
-        switch ($package->getType())
-        {
+        switch ($package->getType()) {
             case 'horde-application':
                 $this->packageDir = $this->webDir . '/' . $this->packageName;
             break;
@@ -44,9 +51,8 @@ class HordeInstaller extends LibraryInstaller
                 $this->packageDir = parent::getInstallPath($package);
             break;
         }
-
+        $this->packageDocRegistryDir = $this->packageDir . '/doc/registry.d/';
     }
-
     /**
      * {@inheritDoc}
      */
@@ -86,6 +92,14 @@ class HordeInstaller extends LibraryInstaller
         $app = $this->packageName;
         // Type horde-application needs a config/horde.local.php pointing to horde dir
         // If a horde-application has a registry snippet in doc-dir, fetch it and put it into config/registry.d
+        if (is_dir($this->packageDocRegistryDir)) {
+            $dir = new DirectoryIterator($this->packageDocRegistryDir);
+            foreach ($dir as $entry) {
+                if ($dir::isFile($entry)) {
+                    copy($entry, $this->hordeRegistryDir);
+                }
+            }
+        }
         // horde-library needs to check for js/ to copy or link
         if ($package->getType() == 'horde-application')
         {
