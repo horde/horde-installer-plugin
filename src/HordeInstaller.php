@@ -33,7 +33,6 @@ class HordeInstaller extends LibraryInstaller
     protected function _setupDirs(PackageInterface $package)
     {
         $this->projectRoot = realpath(dirname(\Composer\Factory::getComposerFile()));
-        $this->presetDir = $this->projectRoot . '/presets';
         $this->webDir = $this->projectRoot . '/web';
         $this->hordeDir = $this->webDir . '/horde';
         $this->hordeRegistryDir = $this->hordeDir . '/config/registry.d/';
@@ -52,6 +51,7 @@ class HordeInstaller extends LibraryInstaller
             break;
         }
         $this->packageDocRegistryDir = $this->packageDir . '/doc/registry.d/';
+        $this->presetDir = $this->projectRoot . '/presets/' . $this->packageName;
     }
     /**
      * {@inheritDoc}
@@ -93,10 +93,19 @@ class HordeInstaller extends LibraryInstaller
         // Type horde-application needs a config/horde.local.php pointing to horde dir
         // If a horde-application has a registry snippet in doc-dir, fetch it and put it into config/registry.d
         if (is_dir($this->packageDocRegistryDir)) {
-            $dir = new DirectoryIterator($this->packageDocRegistryDir);
+            $dir = new \DirectoryIterator($this->packageDocRegistryDir);
             foreach ($dir as $entry) {
-                if ($dir::isFile($entry)) {
-                    copy($entry, $this->hordeRegistryDir);
+                if ($dir->isFile()) {
+                    copy($dir->getPathName(), $this->hordeRegistryDir . $entry);
+                }
+            }
+        }
+        // If a deployment has a preset dir for this app, copy files from preset
+        if (is_dir($this->presetDir)) {
+            $dir = new \DirectoryIterator($this->presetDir);
+            foreach ($dir as $entry) {
+                if ($dir->isFile() && !file_exists($this->packageDir . '/config/' . $entry)) {
+                    copy($dir->getPathName(), $this->packageDir . '/config/' . $entry);
                 }
             }
         }
