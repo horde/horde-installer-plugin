@@ -46,18 +46,22 @@ class HordeInstaller extends LibraryInstaller
         $this->hordeRegistryDir = $this->hordeDir . '/config/registry.d/';
         $this->jsDir = $this->webDir . '/js';
         list($this->vendorName, $this->packageName) = explode('/', $package->getName(), 2);
+
         switch ($package->getType()) {
             case 'horde-application':
                 $this->packageDir = $this->webDir . '/' . $this->packageName;
-            break;
+                break;
+
             case 'horde-theme':
                 $this->packageDir = $this->webDir . '/themes/' . $package->getPrettyName();
-            break;
+                break;
+
             case 'horde-library':
             default:
                 $this->packageDir = parent::getInstallPath($package);
-            break;
+                break;
         }
+
         $this->packageDocRegistryDir = $this->packageDir . '/doc/registry.d/';
         $this->presetDir = $this->projectRoot . '/presets/' . $this->packageName;
     }
