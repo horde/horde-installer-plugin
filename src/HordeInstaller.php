@@ -8,6 +8,7 @@ use Composer\Package\PackageInterface;
 use Composer\Installer\LibraryInstaller;
 use DirectoryIterator;
 use ErrorException;
+use React\Promise\PromiseInterface;
 
 /**
  * Installer implementation for horde apps and themes
@@ -81,9 +82,18 @@ class HordeInstaller extends LibraryInstaller
      */
     public function install(InstalledRepositoryInterface $repo, PackageInterface $package)
     {
-        parent::install($repo, $package);
+        $promise = parent::install($repo, $package);
+        $postInstall = function () use ($repo, $package) {
+            $this->postinstall($repo, $package);
+        };
 
-        $this->postinstall($repo, $package);
+        // Composer v2 might return a promise here
+        if ($promise instanceof PromiseInterface) {
+            return $promise->then($postInstall);
+        }
+
+        // If not, execute the code right away as parent::install executed synchronously (composer v1, or v2 without async)
+        $postInstall();
     }
 
     /**
@@ -91,9 +101,18 @@ class HordeInstaller extends LibraryInstaller
      */
     public function update(InstalledRepositoryInterface $repo, PackageInterface $initial, PackageInterface $target)
     {
-        parent::update($repo, $initial, $target);
+        $promise = parent::update($repo, $initial, $target);
+        $postInstall = function () use ($repo, $target) {
+            $this->postinstall($repo, $target);
+        };
 
-        $this->postinstall($repo, $target);
+        // Composer v2 might return a promise here
+        if ($promise instanceof PromiseInterface) {
+            return $promise->then($postInstall);
+        }
+
+        // If not, execute the code right away as parent::update executed synchronously (composer v1, or v2 without async)
+        $postInstall();
     }
 
     /**
