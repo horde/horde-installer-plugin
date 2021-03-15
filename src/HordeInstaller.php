@@ -6,6 +6,7 @@ use Composer\Factory;
 use Composer\Repository\InstalledRepositoryInterface;
 use Composer\Package\PackageInterface;
 use Composer\Installer\LibraryInstaller;
+use React\Promise\PromiseInterface;
 use DirectoryIterator;
 use ErrorException;
 
@@ -108,9 +109,18 @@ class HordeInstaller extends LibraryInstaller
      */
     public function install(InstalledRepositoryInterface $repo, PackageInterface $package)
     {
-        parent::install($repo, $package);
+        $promise = parent::install($repo, $package);
+        if (!$promise instanceof PromiseInterface) {
+            $promise = \React\Promise\resolve();
+        }
+        $self = $this;
+        return $promise->then(function () use ($self, $package, $repo) {
+            try {
+                $this->postinstall($repo, $package);
+            } catch (\Exception $e) {
+            }
+        });
 
-        $this->postinstall($repo, $package);
     }
 
     /**
@@ -118,9 +128,18 @@ class HordeInstaller extends LibraryInstaller
      */
     public function update(InstalledRepositoryInterface $repo, PackageInterface $initial, PackageInterface $target)
     {
-        parent::update($repo, $initial, $target);
-
-        $this->postinstall($repo, $target);
+        $promise = parent::update($repo, $initial, $target);
+        if (!$promise instanceof PromiseInterface) {
+            $promise = \React\Promise\resolve();
+        }
+        $self = $this;
+        return $promise->then(function () use ($self, $initial, $target, $repo) {
+            try {
+                $this->postinstall($repo, $target);
+            } catch (\Exception $e) {
+                $self->rollbackInstall($e, $repo, $target);
+            }
+        });
     }
 
     /**
