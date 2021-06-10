@@ -79,10 +79,6 @@ class HordeInstaller extends LibraryInstaller
                 $this->packageDir = $this->webDir . '/' . $this->packageName;
                 break;
 
-            case 'horde-theme':
-                $this->packageDir = $this->webDir . '/themes/' . $package->getPrettyName();
-                break;
-
             case 'horde-library':
             default:
                 $this->packageDir = parent::getInstallPath($package);
@@ -207,6 +203,8 @@ $app_webroot = \'/horde\';
                     '$this->applications[\'horde\'][\'webroot\'] = $app_webroot;' . PHP_EOL .
                     '$this->applications[\'horde\'][\'jsfs\'] = $this->applications[\'horde\'][\'fileroot\'] . \'/../js/horde/\';' . PHP_EOL .
                     '$this->applications[\'horde\'][\'jsuri\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../js/horde/\';';
+                    '$this->applications[\'horde\'][\'themesfs\'] = $this->applications[\'horde\'][\'fileroot\'] . \'/../themes/horde/\';' . PHP_EOL .
+                    '$this->applications[\'horde\'][\'themesuri\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../themes/horde/\';';
                     file_put_contents($registryLocalFilePath, $registryLocalFileContent);
                 }
             } else {
@@ -218,7 +216,9 @@ $app_webroot = \'/horde\';
                 $registryAppFilename = $registryDir . '/location-' . $app . '.php';
                 $registryAppSnippet = '<?php' . PHP_EOL .
                   '$this->applications[\'' . $app . "']['fileroot'] = dirname(__FILE__, 4) . '/" . $app . "';" . PHP_EOL .
-                  '$this->applications[\'' . $app . '\'][\'webroot\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../' . $app . "';";
+                  '$this->applications[\'' . $app . '\'][\'webroot\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../' . $app . "';"  . PHP_EOL .
+                  '$this->applications[\'' . $app . '\'][\'themesfs\'] = $this->applications[\'horde\'][\'fileroot\'] . \'/../themes/' . $app . '/\';' . PHP_EOL .
+                  '$this->applications[\'' . $app . '\'][\'themesuri\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../themes/' . $app . '/\';';
                 if (!file_exists($registryAppFilename)) {
                     file_put_contents($registryAppFilename, $registryAppSnippet);
                 }
@@ -233,6 +233,17 @@ $app_webroot = \'/horde\';
         if ($package->getType() == 'horde-library') {
             $this->linkJavaScript($package);
         }
+        // Run the ThemesHandler
+        $themes = new ThemesHandler($this->filesystem, $this->projectRoot);
+        if ($package->getType() == 'horde-theme') {
+            // register
+            $themes->themesCatalog->register(
+                $this->vendorName,
+                $this->packageName,
+                $this->packageDir
+            );
+        }
+        $themes->setupThemes();
     }
 
     public function linkJavaScript($package, $app = 'horde'): void
