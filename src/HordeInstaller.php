@@ -202,7 +202,7 @@ $app_webroot = \'/horde\';
                     '$this->applications[\'horde\'][\'fileroot\'] = $app_fileroot;' . PHP_EOL .
                     '$this->applications[\'horde\'][\'webroot\'] = $app_webroot;' . PHP_EOL .
                     '$this->applications[\'horde\'][\'jsfs\'] = $this->applications[\'horde\'][\'fileroot\'] . \'/../js/horde/\';' . PHP_EOL .
-                    '$this->applications[\'horde\'][\'jsuri\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../js/horde/\';' .
+                    '$this->applications[\'horde\'][\'jsuri\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../js/horde/\';' . PHP_EOL .
                     '$this->applications[\'horde\'][\'themesfs\'] = $this->applications[\'horde\'][\'fileroot\'] . \'/../themes/horde/\';' . PHP_EOL .
                     '$this->applications[\'horde\'][\'themesuri\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../themes/horde/\';';
                     file_put_contents($registryLocalFilePath, $registryLocalFileContent);
