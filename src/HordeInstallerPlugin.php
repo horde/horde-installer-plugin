@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types = 1);
 namespace Horde\Composer;
 
 use Composer\Composer;
@@ -12,5 +12,16 @@ class HordeInstallerPlugin implements PluginInterface
     {
         $installer = new HordeInstaller($io, $composer);
         $composer->getInstallationManager()->addInstaller($installer);
+    }
+
+    public function deactivate(Composer $composer, IOInterface $io)
+    {
+        $installer = new HordeInstaller($io, $composer);
+        $composer->getInstallationManager()->removeInstaller($installer);
+    }
+
+    public function uninstall(Composer $composer, IOInterface $io)
+    {
+        return;
     }
 }
