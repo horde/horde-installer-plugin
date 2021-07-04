@@ -12,6 +12,6 @@
         "composer-plugin-api": "~2.0"
     },
     "require-dev": {
-        "composer/composer": "^~2.0"
+        "composer/composer": "~2.0"
     }
 }
