@@ -101,51 +101,16 @@ class HordeInstaller extends LibraryInstaller
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function install(InstalledRepositoryInterface $repo, PackageInterface $package)
-    {
-        $promise = parent::install($repo, $package);
-        if (!$promise instanceof PromiseInterface) {
-            $promise = \React\Promise\resolve();
-        }
-        $self = $this;
-        return $promise->then(function () use ($self, $package, $repo) {
-            try {
-                $this->postinstall($repo, $package);
-            } catch (\Exception $e) {
-            }
-        });
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function update(InstalledRepositoryInterface $repo, PackageInterface $initial, PackageInterface $target)
-    {
-        $promise = parent::update($repo, $initial, $target);
-        if (!$promise instanceof PromiseInterface) {
-            $promise = \React\Promise\resolve();
-        }
-        $self = $this;
-        return $promise->then(function () use ($self, $initial, $target, $repo) {
-            try {
-                $this->postinstall($repo, $target);
-            } catch (\Exception $e) {
-                $self->rollbackInstall($e, $repo, $target);
-            }
-        });
-    }
-
-    /**
-     * Handle horde-specific install/upgrade tasks
+     * Handle horde-specific postinstall tasks
      *
      * @param InstalledRepositoryInterface $repo  The repository
      * @param PackageInterface $package  The package installed or updated
      */
-    protected function postinstall(InstalledRepositoryInterface $repo, PackageInterface $package): void
+    public function postinstall(PackageInterface $package): void
     {
+        if (!$this->supports($package->getType())) {
+            return;
+        }
         $this->_setupDirs($package);
         $app = $this->packageName;
 
@@ -189,7 +154,7 @@ class HordeInstaller extends LibraryInstaller
                 $hordeLocalFileContent .= "require_once('" . $this->vendorDir ."/autoload.php');";
 
                 // ensure a registry snippet for base exists. If not, create one containing only fileroot
-                $registryLocalFilePath = $this->hordeDir . '/config/registry.d/00-horde.php';
+                $registryLocalFilePath = $this->hordeRegistryDir . '00-horde.php';
                 if (!file_exists($registryLocalFilePath)) {
                     $registryLocalFileContent = sprintf(
                         '<?php
@@ -209,11 +174,7 @@ $app_webroot = \'/horde\';
                 }
             } else {
                 // A registry snippet should ensure the install dir is known
-                $registryDir = $this->hordeDir . '/config/registry.d';
-                if (!is_dir($registryDir)) {
-                    mkdir($registryDir, 0775, true);
-                }
-                $registryAppFilename = $registryDir . '/location-' . $app . '.php';
+                $registryAppFilename = $this->hordeRegistryDir . 'location-' . $app . '.php';
                 $registryAppSnippet = '<?php' . PHP_EOL .
                   '$this->applications[\'' . $app . "']['fileroot'] = dirname(__FILE__, 4) . '/" . $app . "';" . PHP_EOL .
                   '$this->applications[\'' . $app . '\'][\'webroot\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../' . $app . "';"  . PHP_EOL .
