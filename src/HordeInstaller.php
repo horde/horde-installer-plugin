@@ -186,6 +186,7 @@ $app_fileroot = \'%s\';
 $app_webroot = \'%s\';
 ',
                         '/',
+                        $this->webDir,
                         $this->hordeWebDir,
                         '/horde'
 
@@ -203,7 +204,7 @@ $app_webroot = \'%s\';
                 // A registry snippet should ensure the install dir is known
                 $registryAppFilename = $this->configRegistryDir . 'location-' . $app . '.php';
                 $registryAppSnippet = '<?php' . PHP_EOL .
-                  '$this->applications[\'' . $app . "']['fileroot'] = dirname(__FILE__, 4) . '/" . $app . "';" . PHP_EOL .
+                  '$this->applications[\'' . $app . '\'][\'fileroot\'] = $deployment_fileroot/' . $app  . PHP_EOL .
                   '$this->applications[\'' . $app . '\'][\'webroot\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../' . $app . "';"  . PHP_EOL .
                   '$this->applications[\'' . $app . '\'][\'themesfs\'] = $this->applications[\'horde\'][\'fileroot\'] . \'/../themes/' . $app . '/\';' . PHP_EOL .
                   '$this->applications[\'' . $app . '\'][\'themesuri\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../themes/' . $app . '/\';';
