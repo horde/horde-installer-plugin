@@ -143,6 +143,10 @@ class HordeInstaller extends LibraryInstaller
             if (!file_exists($this->appConfigDir)) {
                 mkdir($this->appConfigDir, 0750, true);
             }
+            $staticDir = $this->webDir . '/static';
+            if (!file_exists($staticDir)) {
+                mkdir($staticDir, 0750, true);
+            }
             // Type horde-application needs a config/horde.local.php pointing to horde dir
             // If a horde-application has a registry snippet in doc-dir, fetch it and put it into config/registry.d
             if (is_dir($this->packageDocRegistryDir)) {
@@ -196,8 +200,10 @@ $app_webroot = \'%s\';
                     '$this->applications[\'horde\'][\'webroot\'] = $app_webroot;' . PHP_EOL .
                     '$this->applications[\'horde\'][\'jsfs\'] = $deployment_fileroot . \'/js/horde/\';' . PHP_EOL .
                     '$this->applications[\'horde\'][\'jsuri\'] = $deployment_webroot . \'js/horde/\';' . PHP_EOL .
+                    '$this->applications[\'horde\'][\'staticfs\'] = $deployment_fileroot . \'/static\';' . PHP_EOL .
+                    '$this->applications[\'horde\'][\'staticuri\'] = $deployment_webroot . \'static\';' . PHP_EOL .
                     '$this->applications[\'horde\'][\'themesfs\'] = $deployment_fileroot . \'/themes/horde/\';' . PHP_EOL .
-                    '$this->applications[\'horde\'][\'themesuri\'] = $deployment_webroot . \'/themes/horde/\';';
+                    '$this->applications[\'horde\'][\'themesuri\'] = $deployment_webroot . \'themes/horde/\';';
                     file_put_contents($registryLocalFilePath, $registryLocalFileContent);
                 }
             } else {
