@@ -9,6 +9,8 @@ use Composer\Installer\LibraryInstaller;
 use React\Promise\PromiseInterface;
 use DirectoryIterator;
 use ErrorException;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 /**
  * Installer implementation for horde apps and themes
@@ -20,34 +22,46 @@ class HordeInstaller extends LibraryInstaller
     /**
      * @var string
      */
-    protected $projectRoot = '';
+    protected string $projectRoot = '';
     /**
      * @var string
      */
-    protected $webDir = '';
+    protected string $configDir = '';
+    /**
+     * @var string
+     */
+    protected string $appConfigDir = '';
+    /**
+     * @var string
+     */
+    protected string $hordeConfigDir = '';
+    /**
+     * @var string
+     */
+    protected string $webDir = '';
 
     /**
      * @protected string $presetDir
      *
      * A location to look for preset files in the deployment
      */
-    protected $presetDir = '';
+    protected string $presetDir = '';
     /**
      * @protected string
      */
-    protected $jsDir = '';
+    protected string $jsDir = '';
     /**
      * @protected string
      */
-    protected $hordeDir = '';
+    protected string $hordeWebDir = '';
     /**
      * @protected string
      */
-    protected $hordeRegistryDir = '';
+    protected string $configRegistryDir = '';
     /**
      * @protected string
      */
-    protected $packageDir = '';
+    protected string $packageDir = '';
 
     /**
      * A location to look for package-supplied registry snippets
@@ -55,24 +69,27 @@ class HordeInstaller extends LibraryInstaller
      *
      * @protected string
      */
-    protected $packageDocRegistryDir = '';
+    protected string $packageDocRegistryDir = '';
     /**
      * @protected string
      */
-    protected $packageName = '';
+    protected string $packageName = '';
     /**
      * @protected string
      */
-    protected $vendorName = '';
+    protected string $vendorName = '';
 
-    protected function _setupDirs(PackageInterface $package): void
+    protected function setupDirs(PackageInterface $package): void
     {
+        [$this->vendorName, $this->packageName] = explode('/', $package->getName(), 2);
         $this->projectRoot = realpath(dirname(Factory::getComposerFile()));
         $this->webDir = $this->projectRoot . '/web';
-        $this->hordeDir = $this->webDir . '/horde';
-        $this->hordeRegistryDir = $this->hordeDir . '/config/registry.d/';
+        $this->configDir = $this->projectRoot . '/var/config';
+        $this->hordeConfigDir = $this->projectRoot . '/var/config/horde';
+        $this->appConfigDir = $this->projectRoot . '/var/config/horde';
+        $this->hordeWebDir = $this->webDir . '/horde';
+        $this->configRegistryDir = $this->configDir . '/horde/registry.d/';
         $this->jsDir = $this->webDir . '/js';
-        [$this->vendorName, $this->packageName] = explode('/', $package->getName(), 2);
 
         switch ($package->getType()) {
             case 'horde-application':
@@ -95,127 +112,99 @@ class HordeInstaller extends LibraryInstaller
      */
     public function getInstallPath(PackageInterface $package): string
     {
-        $this->_setupDirs($package);
+        $this->setupDirs($package);
 
         return $this->packageDir;
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function install(InstalledRepositoryInterface $repo, PackageInterface $package)
-    {
-        $promise = parent::install($repo, $package);
-        if (!$promise instanceof PromiseInterface) {
-            $promise = \React\Promise\resolve();
-        }
-        $self = $this;
-        return $promise->then(function () use ($self, $package, $repo) {
-            try {
-                $this->postinstall($repo, $package);
-            } catch (\Exception $e) {
-            }
-        });
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function update(InstalledRepositoryInterface $repo, PackageInterface $initial, PackageInterface $target)
-    {
-        $promise = parent::update($repo, $initial, $target);
-        if (!$promise instanceof PromiseInterface) {
-            $promise = \React\Promise\resolve();
-        }
-        $self = $this;
-        return $promise->then(function () use ($self, $initial, $target, $repo) {
-            try {
-                $this->postinstall($repo, $target);
-            } catch (\Exception $e) {
-                $self->rollbackInstall($e, $repo, $target);
-            }
-        });
-    }
-
-    /**
-     * Handle horde-specific install/upgrade tasks
+     * Handle horde-specific postinstall tasks
      *
      * @param InstalledRepositoryInterface $repo  The repository
      * @param PackageInterface $package  The package installed or updated
      */
-    protected function postinstall(InstalledRepositoryInterface $repo, PackageInterface $package): void
+    public function postinstall(PackageInterface $package): void
     {
-        $this->_setupDirs($package);
+        if (!$this->supports($package->getType())) {
+            return;
+        }
+        $this->setupDirs($package);
         $app = $this->packageName;
 
-        // Type horde-application needs a config/horde.local.php pointing to horde dir
-        // If a horde-application has a registry snippet in doc-dir, fetch it and put it into config/registry.d
-        if (is_dir($this->packageDocRegistryDir)) {
-            $dir = new DirectoryIterator($this->packageDocRegistryDir);
-            foreach ($dir as $entry) {
-                if ($dir->isFile()) {
-                    copy($dir->getPathName(), $this->hordeRegistryDir . $entry);
-                }
-            }
-        }
-
-        // If a deployment has a preset dir for this app, copy files from preset
-        if (is_dir($this->presetDir)) {
-            $dir = new DirectoryIterator($this->presetDir);
-            foreach ($dir as $entry) {
-                if ($dir->isFile() && !file_exists($this->packageDir . '/config/' . $entry)) {
-                    copy($dir->getPathName(), $this->packageDir . '/config/' . $entry);
-                }
-            }
-        }
-
-        // horde-library needs to check for js/ to copy or link
+        // In case of a horde-application
         if ($package->getType() == 'horde-application') {
-            $this->linkJavaScript($package, $this->packageName);
-            $hordeLocalFilePath = $this->packageDir . '/config/horde.local.php';
-            $hordeLocalFileContent = sprintf("<?php if (!defined('HORDE_BASE')) define('HORDE_BASE', '%s');\n",
-            realpath( $this->hordeDir ));
-
-            if ($package->getName() == 'horde/components') {
-                // special case -  a horde app which does not need horde.
-                // Do we need to generalize this for other standalone cases?
-                return;
+            // Create missing dirs
+            if (!file_exists($this->hordeConfigDir)) {
+                mkdir($this->hordeConfigDir, 0750, true);
+            }
+            if (!file_exists($this->configRegistryDir)) {
+                mkdir($this->configRegistryDir, 0750, true);
+            }
+            if (!file_exists($this->appConfigDir)) {
+                mkdir($this->appConfigDir, 0750, true);
+            }
+            // Type horde-application needs a config/horde.local.php pointing to horde dir
+            // If a horde-application has a registry snippet in doc-dir, fetch it and put it into config/registry.d
+            if (is_dir($this->packageDocRegistryDir)) {
+                $dir = new DirectoryIterator($this->packageDocRegistryDir);
+                foreach ($dir as $entry) {
+                    if ($dir->isFile()) {
+                        copy($dir->getPathName(), $this->configRegistryDir . $entry);
+                    }
+                }
+            }
+            // If a deployment has a preset dir for this app, copy files from preset
+            if (is_dir($this->presetDir)) {
+                // TODO: Do we need a RecursiveDirectoryInterator here?
+                $dir = new DirectoryIterator($this->presetDir);
+                foreach ($dir as $entry) {
+                    if ($dir->isFile() && !file_exists($this->appConfigDir . '/' . $entry)) {
+                        copy($dir->getPathName(), $this->appConfigDir . '/' . $entry);
+                    }
+                }
             }
 
+            $this->linkJavaScript($package, $this->packageName);
+            $hordeLocalFilePath = $this->appConfigDir . '/horde.local.php';
+            $hordeLocalFileContent = sprintf(
+                "<?php if (!defined('HORDE_BASE')) define('HORDE_BASE', '%s');\n",
+                $this->hordeWebDir
+            );
             // special case horde/horde needs to require the composer autoloader
             if ($package->getName() == 'horde/horde') {
                 $hordeLocalFileContent .= $this->_legacyWorkaround(realpath($this->vendorDir));
                 $hordeLocalFileContent .= "require_once('" . $this->vendorDir ."/autoload.php');";
 
                 // ensure a registry snippet for base exists. If not, create one containing only fileroot
-                $registryLocalFilePath = $this->hordeDir . '/config/registry.d/00-horde.php';
+                $registryLocalFilePath = $this->configRegistryDir . '/00-horde.php';
                 if (!file_exists($registryLocalFilePath)) {
                     $registryLocalFileContent = sprintf(
                         '<?php
+$deployment_webroot = \'%s\';
+$deployment_fileroot = \'%s\';
 $app_fileroot = \'%s\';
-$app_webroot = \'/horde\';
+$app_webroot = \'%s\';
 ',
-                        realpath($this->getInstallPath($package))
+                        '/',
+                        $this->webDir,
+                        $this->hordeWebDir,
+                        '/horde'
+
                     );
                     $registryLocalFileContent .=
                     '$this->applications[\'horde\'][\'fileroot\'] = $app_fileroot;' . PHP_EOL .
                     '$this->applications[\'horde\'][\'webroot\'] = $app_webroot;' . PHP_EOL .
-                    '$this->applications[\'horde\'][\'jsfs\'] = $this->applications[\'horde\'][\'fileroot\'] . \'/../js/horde/\';' . PHP_EOL .
-                    '$this->applications[\'horde\'][\'jsuri\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../js/horde/\';' . PHP_EOL .
-                    '$this->applications[\'horde\'][\'themesfs\'] = $this->applications[\'horde\'][\'fileroot\'] . \'/../themes/horde/\';' . PHP_EOL .
-                    '$this->applications[\'horde\'][\'themesuri\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../themes/horde/\';';
+                    '$this->applications[\'horde\'][\'jsfs\'] = $deployment_fileroot . \'/js/horde/\';' . PHP_EOL .
+                    '$this->applications[\'horde\'][\'jsuri\'] = $deployment_webroot . \'js/horde/\';' . PHP_EOL .
+                    '$this->applications[\'horde\'][\'themesfs\'] = $deployment_fileroot . \'/themes/horde/\';' . PHP_EOL .
+                    '$this->applications[\'horde\'][\'themesuri\'] = $deployment_webroot . \'/themes/horde/\';';
                     file_put_contents($registryLocalFilePath, $registryLocalFileContent);
                 }
             } else {
                 // A registry snippet should ensure the install dir is known
-                $registryDir = $this->hordeDir . '/config/registry.d';
-                if (!is_dir($registryDir)) {
-                    mkdir($registryDir, 0775, true);
-                }
-                $registryAppFilename = $registryDir . '/location-' . $app . '.php';
+                $registryAppFilename = $this->configRegistryDir . 'location-' . $app . '.php';
                 $registryAppSnippet = '<?php' . PHP_EOL .
-                  '$this->applications[\'' . $app . "']['fileroot'] = dirname(__FILE__, 4) . '/" . $app . "';" . PHP_EOL .
+                  '$this->applications[\'' . $app . '\'][\'fileroot\'] = $deployment_fileroot/' . $app  . PHP_EOL .
                   '$this->applications[\'' . $app . '\'][\'webroot\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../' . $app . "';"  . PHP_EOL .
                   '$this->applications[\'' . $app . '\'][\'themesfs\'] = $this->applications[\'horde\'][\'fileroot\'] . \'/../themes/' . $app . '/\';' . PHP_EOL .
                   '$this->applications[\'' . $app . '\'][\'themesuri\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../themes/' . $app . '/\';';
@@ -244,6 +233,55 @@ $app_webroot = \'/horde\';
             );
         }
         $themes->setupThemes();
+        $this->linkVarConfig();
+    }
+
+    /**
+     * Symlink contents of var/config
+     *
+     * We always check the whole tree even though this may happen
+     * multiple times in installations with many apps
+     * 
+     * @return void
+     */
+    public function linkVarConfig(): void
+    {
+        // Abort unless var/config exists and is readable
+        if (!is_dir($this->configDir) || !is_readable($this->configDir)) {
+            return;
+        }
+        // Iterate through subdirs
+        foreach (new DirectoryIterator($this->configDir) as $appFileInfo) {
+            if (!$appFileInfo->isDir()) {
+                continue;
+            }
+            if ($appFileInfo->isDot()) {
+                continue;
+            }
+            $app = $appFileInfo->getFilename();
+            // Next if no corresponding web/$app/config dir exists
+            $appConfigDir = $appFileInfo->getPathname();
+            $targetDir = $this->webDir . '/' . $app . '/config/';
+            if (!is_dir($targetDir)) {
+                continue;
+            }
+            // Iterate recursively
+            $contentInfo = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($appConfigDir));
+            foreach ($contentInfo as $contentItem) {
+                // Don't symlink dirs
+                if ($contentItem->isDir()) {
+                    continue;
+                }
+                $relativeName = $contentInfo->getSubPathname();
+                $linkName = $targetDir . '/' . $relativeName;
+                $sourceName = $appConfigDir . '/' . $relativeName;
+                if (file_exists($linkName)) {
+                    continue;
+                }
+                symlink($sourceName, $linkName);
+            }
+            // Do not overwrite existing files or links
+        }
     }
 
     public function linkJavaScript($package, $app = 'horde'): void
