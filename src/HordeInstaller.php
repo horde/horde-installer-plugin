@@ -176,7 +176,7 @@ class HordeInstaller extends LibraryInstaller
                 $hordeLocalFileContent .= "require_once('" . $this->vendorDir ."/autoload.php');";
 
                 // ensure a registry snippet for base exists. If not, create one containing only fileroot
-                $registryLocalFilePath = $this->hordeRegistryDir . '00-horde.php';
+                $registryLocalFilePath = $this->configRegistryDir . '/00-horde.php';
                 if (!file_exists($registryLocalFilePath)) {
                     $registryLocalFileContent = sprintf(
                         '<?php
