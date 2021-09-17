@@ -133,7 +133,17 @@ class HordeInstaller extends LibraryInstaller
 
         // In case of a horde-application
         if ($package->getType() == 'horde-application') {
-        // Type horde-application needs a config/horde.local.php pointing to horde dir
+            // Create missing dirs
+            if (!file_exists($this->hordeConfigDir)) {
+                mkdir($this->hordeConfigDir, 0750, true);
+            }
+            if (!file_exists($this->configRegistryDir)) {
+                mkdir($this->configRegistryDir, 0750, true);
+            }
+            if (!file_exists($this->appConfigDir)) {
+                mkdir($this->appConfigDir, 0750, true);
+            }
+            // Type horde-application needs a config/horde.local.php pointing to horde dir
             // If a horde-application has a registry snippet in doc-dir, fetch it and put it into config/registry.d
             if (is_dir($this->packageDocRegistryDir)) {
                 $dir = new DirectoryIterator($this->packageDocRegistryDir);
