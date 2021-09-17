@@ -86,7 +86,7 @@ class HordeInstaller extends LibraryInstaller
         $this->webDir = $this->projectRoot . '/web';
         $this->configDir = $this->projectRoot . '/var/config';
         $this->hordeConfigDir = $this->projectRoot . '/var/config/horde';
-        $this->appConfigDir = $this->projectRoot . '/var/config/horde';
+        $this->appConfigDir = $this->projectRoot . '/var/config/' . $this->packageName;
         $this->hordeWebDir = $this->webDir . '/horde';
         $this->configRegistryDir = $this->configDir . '/horde/registry.d/';
         $this->jsDir = $this->webDir . '/js';
@@ -204,7 +204,7 @@ $app_webroot = \'%s\';
                 // A registry snippet should ensure the install dir is known
                 $registryAppFilename = $this->configRegistryDir . 'location-' . $app . '.php';
                 $registryAppSnippet = '<?php' . PHP_EOL .
-                  '$this->applications[\'' . $app . '\'][\'fileroot\'] = $deployment_fileroot/' . $app  . PHP_EOL .
+                  '$this->applications[\'' . $app . '\'][\'fileroot\'] = $deployment_fileroot/' . $app . ';' . PHP_EOL .
                   '$this->applications[\'' . $app . '\'][\'webroot\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../' . $app . "';"  . PHP_EOL .
                   '$this->applications[\'' . $app . '\'][\'themesfs\'] = $this->applications[\'horde\'][\'fileroot\'] . \'/../themes/' . $app . '/\';' . PHP_EOL .
                   '$this->applications[\'' . $app . '\'][\'themesuri\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../themes/' . $app . '/\';';
