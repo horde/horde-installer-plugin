@@ -8,8 +8,9 @@ use Composer\Plugin\PluginInterface;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\DependencyResolver\Operation\InstallOperation;
 use Composer\DependencyResolver\Operation\UpdateOperation;
+use Composer\Plugin\Capable;
 
-class HordeInstallerPlugin implements PluginInterface, EventSubscriberInterface
+class HordeInstallerPlugin implements PluginInterface, EventSubscriberInterface, Capable
 {
     protected $installer;
 
