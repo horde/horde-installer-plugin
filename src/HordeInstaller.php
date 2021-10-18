@@ -120,7 +120,6 @@ class HordeInstaller extends LibraryInstaller
     /**
      * Handle horde-specific postinstall tasks
      *
-     * @param InstalledRepositoryInterface $repo  The repository
      * @param PackageInterface $package  The package installed or updated
      */
     public function postinstall(PackageInterface $package): void

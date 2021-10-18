@@ -49,7 +49,7 @@ class ThemesCatalog
          * 
          * TODO: Mechanism to override this using a json file
          */
-
+        $themeName = $packageName;
         if (substr($packageName, 0, 6) == 'theme-') {
             $type = 'rootThemes';
             $themeName = substr($packageName, 6);
