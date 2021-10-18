@@ -11,6 +11,6 @@ class CommandProvider implements CommandProviderCapability
 {
     public function getCommands()
     {
-        return [new Command];
+        return [new HordeReconfigureCommand];
     }
 }
