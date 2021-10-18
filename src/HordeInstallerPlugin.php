@@ -65,4 +65,11 @@ class HordeInstallerPlugin implements PluginInterface, EventSubscriberInterface,
             }
         }
     }
+
+    public function getCapabilities()
+    {
+        return [
+            'Composer\Plugin\Capability\CommandProvider' => 'Horde\Composer\CommandProvider',
+        ];
+    }
 }
