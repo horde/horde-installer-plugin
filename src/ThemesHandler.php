@@ -28,6 +28,8 @@ class ThemesHandler
      */
     public $themesCatalog;
 
+    protected string $themesDir;
+
     public function __construct(Filesystem $filesystem, string $rootDir)
     {
         $this->filesystem = $filesystem;

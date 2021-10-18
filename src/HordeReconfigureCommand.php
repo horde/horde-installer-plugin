@@ -22,7 +22,7 @@ EOT
         );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // Get installed packages of types handled by installer
         $hordeApps = InstalledVersions::getInstalledPackagesByType('horde-application');
@@ -37,5 +37,6 @@ EOT
         $output->writeln('Linking app configs to /web Dir');
         $output->writeln('Linking javascript tree to /web/js');
         $output->writeln('Linking themes tree to /web/themes');
+        return 0;
     }
 }

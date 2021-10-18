@@ -12,6 +12,7 @@ class ThemesCatalog
 {
     protected $rootDir;
     protected $catalog;
+    protected string $themesFile;
 
     public function __construct(string $rootDir)
     {
