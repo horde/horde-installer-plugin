@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Composer\Command\BaseCommand;
 use Composer\InstalledVersions;
+use \Composer\Util\Filesystem;
 
 class HordeReconfigureCommand extends BaseCommand
 {
@@ -35,7 +36,16 @@ EOT
         $output->writeln('Looking for registry snippets from apps');
         $output->writeln('Writing app configs to /var/config dir');
         $output->writeln('Linking app configs to /web Dir');
+        $configLinker = new ConfigLinker($rootPackageDir);
+        $configLinker->run();
         $output->writeln('Linking javascript tree to /web/js');
+        $jsLinker = new JsTreeLinker(
+            new Filesystem,
+            $rootPackageDir,
+            $hordeApps,
+            $hordeLibraries
+        );
+        $jsLinker->run();
         $output->writeln('Linking themes tree to /web/themes');
         return 0;
     }
