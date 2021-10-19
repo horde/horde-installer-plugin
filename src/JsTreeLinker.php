@@ -5,6 +5,7 @@ use \DirectoryIterator;
 use \RecursiveDirectoryIterator;
 use \RecursiveIteratorIterator;
 use \Composer\Util\Filesystem;
+use \ErrorException;
 
 class JsTreeLinker
 {

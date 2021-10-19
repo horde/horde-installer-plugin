@@ -8,6 +8,7 @@ use \RecursiveIteratorIterator;
 class ConfigLinker
 {
     private string $baseDir;
+    private string $configDir;
     private string $vendorDir;
     private string $webDir;
 
