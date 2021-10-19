@@ -26,6 +26,7 @@ EOT
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // Get installed packages of types handled by installer
+        $filesystem = new Filesystem;
         $hordeApps = InstalledVersions::getInstalledPackagesByType('horde-application');
         $hordeLibraries = InstalledVersions::getInstalledPackagesByType('horde-library');
         $hordeThemes = InstalledVersions::getInstalledPackagesByType('horde-theme');
@@ -35,12 +36,18 @@ EOT
         $output->writeln('Applying /presets for absent files in /var/config');
         $output->writeln('Looking for registry snippets from apps');
         $output->writeln('Writing app configs to /var/config dir');
+        $hordeLocalWriter = new HordeLocalFileWriter(
+            $filesystem,
+            $rootPackageDir,
+            $hordeApps
+        );
+        $hordeLocalWriter->run();
         $output->writeln('Linking app configs to /web Dir');
         $configLinker = new ConfigLinker($rootPackageDir);
         $configLinker->run();
         $output->writeln('Linking javascript tree to /web/js');
         $jsLinker = new JsTreeLinker(
-            new Filesystem,
+            $filesystem,
             $rootPackageDir,
             $hordeApps,
             $hordeLibraries
