@@ -5,6 +5,11 @@ use \Composer\Util\Filesystem;
 
 class HordeLocalFileWriter
 {
+    /**
+     * List of apps
+     *
+     * @var string[]
+     */
     private array $apps;
     private string $baseDir;
     private string $configDir;
@@ -13,6 +18,13 @@ class HordeLocalFileWriter
     
     private Filesystem $filesystem;
 
+    /**
+     * Undocumented function
+     *
+     * @param Filesystem $filesystem
+     * @param string $baseDir
+     * @param string[] $apps
+     */
     public function __construct(Filesystem $filesystem, string $baseDir, array $apps)
     {
         $this->filesystem = $filesystem;
@@ -23,14 +35,14 @@ class HordeLocalFileWriter
         $this->apps = $apps;
     }
 
-    public function run()
+    public function run(): void
     {
         foreach ($this->apps as $app) {
             $this->processApp($app);
         }
     }
 
-    private function processApp(string $app)
+    private function processApp(string $app): void
     {
         $hordeWebDir = $this->webDir . '/horde';
         list($vendor, $name) = explode('/', $app, 2);

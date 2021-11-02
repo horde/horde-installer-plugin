@@ -5,6 +5,7 @@ namespace Horde\Composer;
 use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
+use Composer\Installer\PackageEvent;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\DependencyResolver\Operation\InstallOperation;
 use Composer\DependencyResolver\Operation\UpdateOperation;
@@ -12,25 +13,30 @@ use Composer\Plugin\Capable;
 
 class HordeInstallerPlugin implements PluginInterface, EventSubscriberInterface, Capable
 {
-    protected $installer;
+    protected HordeInstaller $installer;
 
-    public function activate(Composer $composer, IOInterface $io)
+    public function activate(Composer $composer, IOInterface $io): void
     {
         $this->installer = new HordeInstaller($io, $composer);
         $composer->getInstallationManager()->addInstaller($this->installer);
     }
 
-    public function deactivate(Composer $composer, IOInterface $io)
+    public function deactivate(Composer $composer, IOInterface $io): void
     {
         $composer->getInstallationManager()->removeInstaller($this->installer);
     }
 
-    public function uninstall(Composer $composer, IOInterface $io)
+    public function uninstall(Composer $composer, IOInterface $io): void
     {
         return;
     }
 
-    public static function getSubscribedEvents()
+    /**
+     * Exposre which events are handled by which handler
+     *
+     * @return string[]
+     */
+    public static function getSubscribedEvents(): array
     {
         return [
             'post-package-install' => 'postInstallHandler',
@@ -38,7 +44,13 @@ class HordeInstallerPlugin implements PluginInterface, EventSubscriberInterface,
         ];
     }
 
-    public function postInstallHandler($event)
+    /**
+     * Handler for post-package-install
+     *
+     * @param PackageEvent $event
+     * @return void
+     */
+    public function postInstallHandler(PackageEvent $event): void
     {
         $ops = $event->getOperations();
         foreach($ops as $op) {
@@ -52,7 +64,13 @@ class HordeInstallerPlugin implements PluginInterface, EventSubscriberInterface,
         }
     }
 
-    public function postUpdateHandler($event)
+    /**
+     * Handler for post-package-update
+     *
+     * @param PackageEvent $event
+     * @return void
+     */
+    public function postUpdateHandler(PackageEvent $event): void
     {
         $ops = $event->getOperations();
         foreach($ops as $op) {
@@ -66,7 +84,12 @@ class HordeInstallerPlugin implements PluginInterface, EventSubscriberInterface,
         }
     }
 
-    public function getCapabilities()
+    /**
+     * Expose capabilities
+     *
+     * @return string[]
+     */
+    public function getCapabilities(): array
     {
         return [
             'Composer\Plugin\Capability\CommandProvider' => 'Horde\Composer\CommandProvider',

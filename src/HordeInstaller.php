@@ -289,7 +289,7 @@ $app_webroot = \'%s\';
         }
     }
 
-    public function linkJavaScript($package, $app = 'horde'): void
+    public function linkJavaScript(PackageInterface $package, string $app = 'horde'): void
     {
         // TODO: Error handling
         $packageJsDir = $this->getInstallPath($package) . '/js/';
@@ -317,7 +317,7 @@ $app_webroot = \'%s\';
     }
 
     // Work around case inconsistencies, hard requires etc until they are resolved in code
-    protected function _legacyWorkaround($path): string
+    protected function _legacyWorkaround(string $path): string
     {
         return sprintf("ini_set('include_path', '%s/horde/autoloader/lib%s%s/horde/form/lib/%s' .  ini_get('include_path'));
         require_once('%s/horde/core/lib/Horde/Core/Nosql.php');

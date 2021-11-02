@@ -67,7 +67,7 @@ class ThemesHandler
         }
     }
 
-    public function setupPackagedThemes()
+    public function setupPackagedThemes(): void
     {
         foreach ($this->themesCatalog->toArray() as $theme) {
             foreach ($theme as $app => $appTheme) {
@@ -85,7 +85,7 @@ class ThemesHandler
      * 
      * TODO: Unregister themes which are not really installed but indexed
      */
-    public function setupThemes()
+    public function setupThemes(): void
     {
         $this->ensureThemesFolderExists();
         $this->setupDefaultTheme();

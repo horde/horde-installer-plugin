@@ -14,9 +14,27 @@ class JsTreeLinker
     private string $vendorDir;
     private string $webDir;
     private string $jsDir;
+    /**
+     * List of apps
+     *
+     * @var string[]
+     */
     private array $apps;
+    /**
+     * List of libraries
+     *
+     * @var string[]
+     */
     private array $libs;
 
+    /**
+     * Constructor
+     *
+     * @param Filesystem $filesystem
+     * @param string $baseDir
+     * @param string[] $apps
+     * @param string[] $libs
+     */
     public function __construct(
         Filesystem $filesystem,
         string $baseDir,
@@ -77,7 +95,7 @@ class JsTreeLinker
     }
 
     // Link all files and subdirs from source dir to target dir
-    public function linkDir(string $sourceDir, string $targetDir)
+    public function linkDir(string $sourceDir, string $targetDir): void
     {
         $this->filesystem->ensureDirectoryExists($targetDir);
         try {

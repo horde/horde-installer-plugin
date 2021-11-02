@@ -10,8 +10,13 @@ use \DirectoryIterator;
  */
 class ThemesCatalog
 {
-    protected $rootDir;
-    protected $catalog;
+    protected string $rootDir;
+    /**
+     * Nested structure
+     *
+     * @var array<mixed>
+     */
+    protected array $catalog;
     protected string $themesFile;
 
     public function __construct(string $rootDir)
@@ -30,7 +35,7 @@ class ThemesCatalog
         }
     }
 
-    public function save()
+    public function save(): void
     {
         file_put_contents($this->themesFile, json_encode($this->catalog, JSON_PRETTY_PRINT));
     }
@@ -40,7 +45,7 @@ class ThemesCatalog
         string $vendorName,
         string $packageName,
         string $installDir
-    ) {
+    ): void {
         /**
          * Convention: 
          * 
@@ -74,12 +79,17 @@ class ThemesCatalog
         $this->save();
     }
 
-    public function unregister()
+    public function unregister(): void
     {
         $this->save();
     }
 
-    public function toArray()
+    /**
+     * Return an array representation
+     *
+     * @return array<mixed>
+     */
+    public function toArray(): array
     {
         return $this->catalog;
     }
