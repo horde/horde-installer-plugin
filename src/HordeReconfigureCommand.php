@@ -35,7 +35,14 @@ EOT
         $rootPackageDir = dirname($composer->getConfig()->get('vendor-dir'));
         $output->writeln('Applying /presets for absent files in /var/config');
         $presetHandler = new PresetHandler($rootPackageDir, $filesystem);
+        $presetHandler->handle();
         $output->writeln('Looking for registry snippets from apps');
+        $snippetHandler = new PackageDocRegistrySnippetHandler(
+            $rootPackageDir,
+            $filesystem,
+            $hordeApps
+        );
+        $snippetHandler->handle();
 
         $output->writeln('Writing app configs to /var/config dir');
         $hordeLocalWriter = new HordeLocalFileWriter(
