@@ -9,13 +9,11 @@ class ConfigLinker
 {
     private string $baseDir;
     private string $configDir;
-    private string $vendorDir;
     private string $webDir;
 
     public function __construct(string $baseDir)
     {
         $this->baseDir = $baseDir;
-        $this->vendorDir = $baseDir . '/vendor';
         $this->webDir= $baseDir . '/web';
         $this->configDir = $this->baseDir . '/var/config';
     }
@@ -44,7 +42,7 @@ class ConfigLinker
             $app = $appFileInfo->getFilename();
             // Next if no corresponding web/$app/config dir exists
             $appConfigDir = $appFileInfo->getPathname();
-            $targetDir = $this->webDir . '/' . $app . '/config/';
+            $targetDir = $this->webDir . '/' . $app . '/config';
             if (!is_dir($targetDir)) {
                 continue;
             }
@@ -55,7 +53,15 @@ class ConfigLinker
                 if ($contentItem->isDir()) {
                     continue;
                 }
+                if (!is_dir($targetDir)) {
+                    continue;
+                }
+                // Generate missing dirs below targetdir
                 $relativeName = $contentInfo->getSubPathname();
+                $subPath = $targetDir . '/' . $contentInfo->getSubPath();
+                if (!is_dir($subPath)) {
+                    mkdir($subPath, 0770, true);
+                }
                 $linkName = $targetDir . '/' . $relativeName;
                 $sourceName = $appConfigDir . '/' . $relativeName;
                 if (file_exists($linkName)) {

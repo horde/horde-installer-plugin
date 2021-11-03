@@ -11,7 +11,6 @@ class HordeLocalFileWriter
      * @var string[]
      */
     private array $apps;
-    private string $baseDir;
     private string $configDir;
     private string $vendorDir;
     private string $webDir;
@@ -28,7 +27,6 @@ class HordeLocalFileWriter
     public function __construct(Filesystem $filesystem, string $baseDir, array $apps)
     {
         $this->filesystem = $filesystem;
-        $this->baseDir = $baseDir;
         $this->configDir = $baseDir . '/var/config';
         $this->vendorDir = $baseDir . '/vendor';
         $this->webDir = $baseDir . '/web';

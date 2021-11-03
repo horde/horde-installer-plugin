@@ -31,6 +31,9 @@ EOT
         $hordeLibraries = InstalledVersions::getInstalledPackagesByType('horde-library');
         $hordeThemes = InstalledVersions::getInstalledPackagesByType('horde-theme');
         $composer = $this->getComposer();
+        if (!$composer) {
+            die('Error: Command was run without a relation to composer itself');
+        }
         $rootPackage = $composer->getPackage();
         $rootPackageDir = dirname($composer->getConfig()->get('vendor-dir'));
         $output->writeln('Applying /presets for absent files in /var/config');
