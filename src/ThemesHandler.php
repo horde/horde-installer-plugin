@@ -28,6 +28,8 @@ class ThemesHandler
      */
     public $themesCatalog;
 
+    protected string $themesDir;
+
     public function __construct(Filesystem $filesystem, string $rootDir)
     {
         $this->filesystem = $filesystem;
@@ -65,7 +67,7 @@ class ThemesHandler
         }
     }
 
-    public function setupPackagedThemes()
+    public function setupPackagedThemes(): void
     {
         foreach ($this->themesCatalog->toArray() as $theme) {
             foreach ($theme as $app => $appTheme) {
@@ -83,7 +85,7 @@ class ThemesHandler
      * 
      * TODO: Unregister themes which are not really installed but indexed
      */
-    public function setupThemes()
+    public function setupThemes(): void
     {
         $this->ensureThemesFolderExists();
         $this->setupDefaultTheme();

@@ -82,11 +82,11 @@ class HordeInstaller extends LibraryInstaller
     protected function setupDirs(PackageInterface $package): void
     {
         [$this->vendorName, $this->packageName] = explode('/', $package->getName(), 2);
-        $this->projectRoot = realpath(dirname(Factory::getComposerFile()));
+        $this->projectRoot = (string)realpath(dirname(Factory::getComposerFile()));
         $this->webDir = $this->projectRoot . '/web';
         $this->configDir = $this->projectRoot . '/var/config';
         $this->hordeConfigDir = $this->projectRoot . '/var/config/horde';
-        $this->appConfigDir = $this->projectRoot . '/var/config/horde';
+        $this->appConfigDir = $this->projectRoot . '/var/config/' . $this->packageName;
         $this->hordeWebDir = $this->webDir . '/horde';
         $this->configRegistryDir = $this->configDir . '/horde/registry.d/';
         $this->jsDir = $this->webDir . '/js';
@@ -158,7 +158,6 @@ class HordeInstaller extends LibraryInstaller
     /**
      * Handle horde-specific postinstall tasks
      *
-     * @param InstalledRepositoryInterface $repo  The repository
      * @param PackageInterface $package  The package installed or updated
      */
     public function postinstall(PackageInterface $package): void
@@ -180,6 +179,10 @@ class HordeInstaller extends LibraryInstaller
             }
             if (!file_exists($this->appConfigDir)) {
                 mkdir($this->appConfigDir, 0750, true);
+            }
+            $staticDir = $this->webDir . '/static';
+            if (!file_exists($staticDir)) {
+                mkdir($staticDir, 0750, true);
             }
             // Type horde-application needs a config/horde.local.php pointing to horde dir
             // If a horde-application has a registry snippet in doc-dir, fetch it and put it into config/registry.d
@@ -234,15 +237,17 @@ $app_webroot = \'%s\';
                     '$this->applications[\'horde\'][\'webroot\'] = $app_webroot;' . PHP_EOL .
                     '$this->applications[\'horde\'][\'jsfs\'] = $deployment_fileroot . \'/js/horde/\';' . PHP_EOL .
                     '$this->applications[\'horde\'][\'jsuri\'] = $deployment_webroot . \'js/horde/\';' . PHP_EOL .
+                    '$this->applications[\'horde\'][\'staticfs\'] = $deployment_fileroot . \'/static\';' . PHP_EOL .
+                    '$this->applications[\'horde\'][\'staticuri\'] = $deployment_webroot . \'static\';' . PHP_EOL .
                     '$this->applications[\'horde\'][\'themesfs\'] = $deployment_fileroot . \'/themes/horde/\';' . PHP_EOL .
-                    '$this->applications[\'horde\'][\'themesuri\'] = $deployment_webroot . \'/themes/horde/\';';
+                    '$this->applications[\'horde\'][\'themesuri\'] = $deployment_webroot . \'themes/horde/\';';
                     file_put_contents($registryLocalFilePath, $registryLocalFileContent);
                 }
             } else {
                 // A registry snippet should ensure the install dir is known
                 $registryAppFilename = $this->configRegistryDir . 'location-' . $app . '.php';
                 $registryAppSnippet = '<?php' . PHP_EOL .
-                  '$this->applications[\'' . $app . '\'][\'fileroot\'] = $deployment_fileroot/' . $app  . PHP_EOL .
+                  '$this->applications[\'' . $app . '\'][\'fileroot\'] = "$deployment_fileroot/' . $app . '";' . PHP_EOL .
                   '$this->applications[\'' . $app . '\'][\'webroot\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../' . $app . "';"  . PHP_EOL .
                   '$this->applications[\'' . $app . '\'][\'themesfs\'] = $this->applications[\'horde\'][\'fileroot\'] . \'/../themes/' . $app . '/\';' . PHP_EOL .
                   '$this->applications[\'' . $app . '\'][\'themesuri\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../themes/' . $app . '/\';';
@@ -322,7 +327,7 @@ $app_webroot = \'%s\';
         }
     }
 
-    public function linkJavaScript($package, $app = 'horde'): void
+    public function linkJavaScript(PackageInterface $package, string $app = 'horde'): void
     {
         // TODO: Error handling
         $packageJsDir = $this->getInstallPath($package) . '/js/';
@@ -350,7 +355,7 @@ $app_webroot = \'%s\';
     }
 
     // Work around case inconsistencies, hard requires etc until they are resolved in code
-    protected function _legacyWorkaround($path): string
+    protected function _legacyWorkaround(string $path): string
     {
         return sprintf("ini_set('include_path', '%s/horde/autoloader/lib%s%s/horde/form/lib/%s' .  ini_get('include_path'));
         require_once('%s/horde/core/lib/Horde/Core/Nosql.php');
