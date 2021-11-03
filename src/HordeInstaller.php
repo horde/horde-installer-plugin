@@ -82,7 +82,7 @@ class HordeInstaller extends LibraryInstaller
     protected function setupDirs(PackageInterface $package): void
     {
         [$this->vendorName, $this->packageName] = explode('/', $package->getName(), 2);
-        $this->projectRoot = realpath(dirname(Factory::getComposerFile()));
+        $this->projectRoot = (string)realpath(dirname(Factory::getComposerFile()));
         $this->webDir = $this->projectRoot . '/web';
         $this->configDir = $this->projectRoot . '/var/config';
         $this->hordeConfigDir = $this->projectRoot . '/var/config/horde';
