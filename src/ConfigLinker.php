@@ -53,9 +53,6 @@ class ConfigLinker
                 if ($contentItem->isDir()) {
                     continue;
                 }
-                if (!is_dir($targetDir)) {
-                    continue;
-                }
                 // Generate missing dirs below targetdir
                 $relativeName = $contentInfo->getSubPathname();
                 $subPath = $targetDir . '/' . $contentInfo->getSubPath();
