@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace Horde\Composer;
 
 use Composer\Factory;
@@ -175,7 +177,7 @@ class HordeInstaller extends LibraryInstaller
             );
             // special case horde/horde needs to require the composer autoloader
             if ($package->getName() == 'horde/horde') {
-                $hordeLocalFileContent .= $this->_legacyWorkaround(realpath($this->vendorDir));
+                $hordeLocalFileContent .= $this->_legacyWorkaround($this->filesystem->normalizePath($this->vendorDir));
                 $hordeLocalFileContent .= "require_once('" . $this->vendorDir ."/autoload.php');";
 
                 // ensure a registry snippet for base exists. If not, create one containing only fileroot
@@ -192,7 +194,6 @@ $app_webroot = \'%s\';
                         $this->webDir,
                         $this->hordeWebDir,
                         '/horde'
-
                     );
                     $registryLocalFileContent .=
                     '$this->applications[\'horde\'][\'fileroot\'] = $app_fileroot;' . PHP_EOL .
@@ -246,7 +247,7 @@ $app_webroot = \'%s\';
      *
      * We always check the whole tree even though this may happen
      * multiple times in installations with many apps
-     * 
+     *
      * @return void
      */
     public function linkVarConfig(): void
@@ -299,6 +300,9 @@ $app_webroot = \'%s\';
 
         try {
             $jsDirHandle = opendir($packageJsDir);
+            if ($jsDirHandle === false) {
+                return;
+            }
         } catch (ErrorException $errorException) {
             return;
         }
@@ -310,7 +314,7 @@ $app_webroot = \'%s\';
                 continue;
             }
 
-            $this->filesystem->relativeSymlink(realpath(sprintf('%s/%s', $packageJsDir, $sourceItem)),  sprintf('%s/%s', $targetDir, $sourceItem));
+            $this->filesystem->relativeSymlink(sprintf('%s/%s', $packageJsDir, $sourceItem), sprintf('%s/%s', $targetDir, $sourceItem));
         }
 
         closedir($jsDirHandle);
@@ -319,7 +323,8 @@ $app_webroot = \'%s\';
     // Work around case inconsistencies, hard requires etc until they are resolved in code
     protected function _legacyWorkaround(string $path): string
     {
-        return sprintf("ini_set('include_path', '%s/horde/autoloader/lib%s%s/horde/form/lib/%s' .  ini_get('include_path'));
+        return sprintf(
+            "ini_set('include_path', '%s/horde/autoloader/lib%s%s/horde/form/lib/%s' .  ini_get('include_path'));
         require_once('%s/horde/core/lib/Horde/Core/Nosql.php');
         ",
             $path,

@@ -1,7 +1,10 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace Horde\Composer;
-use \Composer\Util\Filesystem;
+
+use Composer\Util\Filesystem;
 
 class HordeLocalFileWriter
 {
@@ -14,7 +17,7 @@ class HordeLocalFileWriter
     private string $configDir;
     private string $vendorDir;
     private string $webDir;
-    
+
     private Filesystem $filesystem;
 
     /**
@@ -52,14 +55,14 @@ class HordeLocalFileWriter
         );
         // special case horde/horde needs to require the composer autoloader
         if ($app == 'horde/horde') {
-            $hordeLocalFileContent .= $this->_legacyWorkaround(realpath($this->vendorDir));
+            $hordeLocalFileContent .= $this->_legacyWorkaround($this->filesystem->normalizePath($this->vendorDir));
             $hordeLocalFileContent .= "require_once('" . $this->vendorDir ."/autoload.php');";
         }
         $this->filesystem->filePutContentsIfModified($path, $hordeLocalFileContent);
     }
     /**
      * Legacy support
-     * 
+     *
      * Work around case inconsistencies
      * hard requires etc until they are resolved in code
      *
@@ -68,7 +71,8 @@ class HordeLocalFileWriter
      */
     protected function _legacyWorkaround(string $path): string
     {
-        return sprintf("ini_set('include_path', '%s/horde/autoloader/lib%s%s/horde/form/lib/%s' .  ini_get('include_path'));
+        return sprintf(
+            "ini_set('include_path', '%s/horde/autoloader/lib%s%s/horde/form/lib/%s' .  ini_get('include_path'));
         require_once('%s/horde/core/lib/Horde/Core/Nosql.php');
         ",
             $path,
@@ -77,5 +81,5 @@ class HordeLocalFileWriter
             PATH_SEPARATOR,
             $path
         );
-    }   
+    }
 }

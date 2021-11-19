@@ -1,9 +1,13 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace Horde\Composer;
-use \json_decode;
-use \file_get_contents;
-use \DirectoryIterator;
+
+use json_decode;
+use file_get_contents;
+use DirectoryIterator;
+use Exception;
 
 /**
  * Encapsulate handling the themes catalog
@@ -24,12 +28,18 @@ class ThemesCatalog
         $this->rootDir = $rootDir;
         $this->themesFile = $rootDir . '/themes.json';
         if (is_file($this->themesFile)) {
-            $this->catalog = json_decode(
-                file_get_contents(
-                    $this->themesFile
-                ),
+            $content = file_get_contents($this->themesFile);
+            if ($content === false) {
+                throw new Exception('Could not read themes json file content');
+            }
+            $catalog = json_decode(
+                $content,
                 true
             );
+            if (!is_array($catalog)) {
+                throw new Exception('Invalid themes json file content');
+            }
+            $this->catalog = $catalog;
         } else {
             $this->catalog = [];
         }
@@ -47,11 +57,11 @@ class ThemesCatalog
         string $installDir
     ): void {
         /**
-         * Convention: 
-         * 
+         * Convention:
+         *
          * Root themes package names start with theme-
          * Addon themes packages start with apptheme-$app
-         * 
+         *
          * TODO: Mechanism to override this using a json file
          */
         $themeName = $packageName;

@@ -100,6 +100,9 @@ class JsTreeLinker
         $this->filesystem->ensureDirectoryExists($targetDir);
         try {
             $sourceDirHandle = opendir($sourceDir);
+            if ($sourceDirHandle === false) {
+                return;
+            }
         } catch (ErrorException $errorException) {
             return;
         }
