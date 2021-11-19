@@ -1,18 +1,20 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace Horde\Composer;
-use \DirectoryIterator;
+
+use DirectoryIterator;
 use Composer\Util\Filesystem;
 
-class PresetHandler {
-    private string $rootDir;
+class PresetHandler
+{
     private string $presetDir;
     private string $configDir;
     private Filesystem $filesystem;
 
     public function __construct(string $rootDir, Filesystem $filesystem)
     {
-        $this->rootDir = $rootDir;
         $this->presetDir = $rootDir . '/presets';
         $this->configDir = $rootDir . '/var/config';
         $this->filesystem = $filesystem;
