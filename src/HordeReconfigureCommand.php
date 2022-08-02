@@ -33,7 +33,7 @@ EOT
         $hordeApps = InstalledVersions::getInstalledPackagesByType('horde-application');
         $hordeLibraries = InstalledVersions::getInstalledPackagesByType('horde-library');
         $hordeThemes = InstalledVersions::getInstalledPackagesByType('horde-theme');
-        $composer = $this->getComposer();
+        $composer = $this->requireComposer();
         if (!$composer) {
             die('Error: Command was run without a relation to composer itself');
         }
