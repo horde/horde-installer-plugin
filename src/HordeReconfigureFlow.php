@@ -27,7 +27,7 @@ class HordeReconfigureFlow
     /**
      * Run the reconfigure flow
      */
-    public function run()
+    public function run(): int
     {
         // Get installed packages of types handled by installer
         $filesystem = new Filesystem();

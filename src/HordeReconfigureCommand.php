@@ -25,7 +25,11 @@ EOT
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $composer = $this->requireComposer();
+        if (method_exists($this, 'requireComposer')) {
+            $composer = $this->requireComposer();
+        } else {
+            $composer = $this->getComposer();
+        }
         if (!$composer) {
             die('Error: Command was run without a relation to composer itself');
         }

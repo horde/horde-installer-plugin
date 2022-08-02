@@ -1,7 +1,7 @@
 <?php
 /**
  * Common interface implemented by shims for 
- * Composer\IO\IoInterface and Symfony\Component\Console\Output\OutputInterface
+ * Composer\IO\IOInterface and Symfony\Component\Console\Output\OutputInterface
  * Allows factoring out implementation into HordeReconfigureFlow
  * without losing output capabilities.
  *
@@ -10,13 +10,13 @@
 declare(strict_types=1);
 
 namespace Horde\Composer\IOAdapter;
-use Composer\IO\IoInterface;
+use Composer\IO\IOInterface;
 
 class ComposerIoAdapter implements FlowIoInterface
 {
-    private IoInterface $io;
+    private IOInterface $io;
 
-    public function __construct(IoInterface $io)
+    public function __construct(IOInterface $io)
     {
         $this->io = $io;
     }

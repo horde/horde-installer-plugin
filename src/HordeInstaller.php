@@ -29,12 +29,26 @@ class HordeInstaller extends LibraryInstaller
         if (!$this->supports($package->getType())) {
             return;
         }
-        $this->setupDirs($package);
-        $app = $this->packageName;
         $flow = new HordeReconfigureFlow(new ComposerIoAdapter($this->io), $this->composer);
         $flow->run();
     }
 
+    /**
+     * {@inheritDoc}
+     * @return string
+     */
+    public function getInstallPath(PackageInterface $package): string
+    {
+        switch ($package->getType()) {
+            case 'horde-application':
+                [$vendorName, $packageName] = explode('/', $package->getName(), 2);
+                $projectRoot = (string)realpath(dirname(Factory::getComposerFile()));
+                return $projectRoot . '/web/' . $packageName;
+            case 'horde-library':
+            default:
+                return parent::getInstallPath($package);
+        }
+    }
     /**
      * {@inheritDoc}
      * @return bool
