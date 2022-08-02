@@ -8,9 +8,6 @@ use Composer\Plugin\Capability\CommandProvider as CommandProviderCapability;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Composer\Command\BaseCommand;
-use Composer\InstalledVersions;
-use Composer\Util\Filesystem;
-use RuntimeException;
 
 class HordeReconfigureCommand extends BaseCommand
 {
@@ -28,52 +25,11 @@ EOT
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        // Get installed packages of types handled by installer
-        $filesystem = new Filesystem();
-        $hordeApps = InstalledVersions::getInstalledPackagesByType('horde-application');
-        $hordeLibraries = InstalledVersions::getInstalledPackagesByType('horde-library');
-        $hordeThemes = InstalledVersions::getInstalledPackagesByType('horde-theme');
         $composer = $this->requireComposer();
         if (!$composer) {
             die('Error: Command was run without a relation to composer itself');
         }
-        $vendorDir = $composer->getConfig()->get('vendor-dir');
-        if (!is_string($vendorDir)) {
-            throw new RuntimeException('Cannot get vendor dir from config');
-        }
-        $rootPackageDir = dirname($vendorDir);
-        $output->writeln('Applying /presets for absent files in /var/config');
-        $presetHandler = new PresetHandler($rootPackageDir, $filesystem);
-        $presetHandler->handle();
-        $output->writeln('Looking for registry snippets from apps');
-        $snippetHandler = new PackageDocRegistrySnippetHandler(
-            $rootPackageDir,
-            $filesystem,
-            $hordeApps
-        );
-        $snippetHandler->handle();
-
-        $output->writeln('Writing app configs to /var/config dir');
-        $hordeLocalWriter = new HordeLocalFileWriter(
-            $filesystem,
-            $rootPackageDir,
-            $hordeApps
-        );
-        $hordeLocalWriter->run();
-        $output->writeln('Linking app configs to /web Dir');
-        $configLinker = new ConfigLinker($rootPackageDir);
-        $configLinker->run();
-        $output->writeln('Linking javascript tree to /web/js');
-        $jsLinker = new JsTreeLinker(
-            $filesystem,
-            $rootPackageDir,
-            $hordeApps,
-            $hordeLibraries
-        );
-        $jsLinker->run();
-        $output->writeln('Linking themes tree to /web/themes');
-        $themesHandler = new ThemesHandler($filesystem, $rootPackageDir);
-        $themesHandler->setupThemes();
-        return 0;
+        $flow = new HordeReconfigureFlow(new IOAdapter\SymphonyOutputAdapter($output), $composer);
+        return $flow->run();
     }
 }

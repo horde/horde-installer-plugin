@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Horde\Composer\IOAdapter;
 use Composer\IO\IoInterface;
 
-class SymphonyOutputAdapter implements FlowIoInterface
+class ComposerIoAdapter implements FlowIoInterface
 {
     private IoInterface $io;
 
