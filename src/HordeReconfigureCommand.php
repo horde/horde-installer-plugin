@@ -37,7 +37,6 @@ EOT
         if (!$composer) {
             die('Error: Command was run without a relation to composer itself');
         }
-        $rootPackage = $composer->getPackage();
         $vendorDir = $composer->getConfig()->get('vendor-dir');
         if (!is_string($vendorDir)) {
             throw new RuntimeException('Cannot get vendor dir from config');
