@@ -1,9 +1,12 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace Horde\Composer;
-use \DirectoryIterator;
-use \RecursiveDirectoryIterator;
-use \RecursiveIteratorIterator;
+
+use DirectoryIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 class ConfigLinker
 {
@@ -22,7 +25,7 @@ class ConfigLinker
      *
      * We always check the whole tree even though this may happen
      * multiple times in installations with many apps
-     * 
+     *
      * @return void
      */
     public function run(): void

@@ -73,5 +73,4 @@ class HordeReconfigureFlow
         $themesHandler->setupThemes();
         return 0;
     }
-
 }

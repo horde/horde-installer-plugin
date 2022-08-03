@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace Horde\Composer;
 
 use Composer\Composer;
@@ -53,7 +55,7 @@ class HordeInstallerPlugin implements PluginInterface, EventSubscriberInterface,
     public function postInstallHandler(PackageEvent $event): void
     {
         $ops = $event->getOperations();
-        foreach($ops as $op) {
+        foreach ($ops as $op) {
             if ($op instanceof InstallOperation) {
                 $package = $op->getPackage();
                 try {
@@ -73,7 +75,7 @@ class HordeInstallerPlugin implements PluginInterface, EventSubscriberInterface,
     public function postUpdateHandler(PackageEvent $event): void
     {
         $ops = $event->getOperations();
-        foreach($ops as $op) {
+        foreach ($ops as $op) {
             if ($op instanceof UpdateOperation) {
                 $package = $op->getTargetPackage();
                 try {
