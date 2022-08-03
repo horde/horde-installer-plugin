@@ -34,56 +34,26 @@ class HordeInstallerPlugin implements PluginInterface, EventSubscriberInterface,
     }
 
     /**
-     * Exposre which events are handled by which handler
+     * Expose which events are handled by which handler
      *
      * @return string[]
      */
     public static function getSubscribedEvents(): array
     {
         return [
-            'post-package-install' => 'postInstallHandler',
-            'post-package-update' => 'postUpdateHandler',
+            'post-autoload-dump' => array('reconfigureHandler', 1)
         ];
     }
 
     /**
-     * Handler for post-package-install
+     * Trigger reconfigure command only once per action
      *
      * @param PackageEvent $event
      * @return void
      */
-    public function postInstallHandler(PackageEvent $event): void
+    public function reconfigureHandler(PackageEvent $event): void
     {
-        $ops = $event->getOperations();
-        foreach ($ops as $op) {
-            if ($op instanceof InstallOperation) {
-                $package = $op->getPackage();
-                try {
-                    $this->installer->postinstall($package);
-                } catch (\Exception $e) {
-                }
-            }
-        }
-    }
-
-    /**
-     * Handler for post-package-update
-     *
-     * @param PackageEvent $event
-     * @return void
-     */
-    public function postUpdateHandler(PackageEvent $event): void
-    {
-        $ops = $event->getOperations();
-        foreach ($ops as $op) {
-            if ($op instanceof UpdateOperation) {
-                $package = $op->getTargetPackage();
-                try {
-                    $this->installer->postinstall($package);
-                } catch (\Exception $e) {
-                }
-            }
-        }
+        $this->installer->postinstall($package);
     }
 
     /**
