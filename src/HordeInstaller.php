@@ -22,7 +22,7 @@ class HordeInstaller extends LibraryInstaller
     /**
      * Handle horde-specific postinstall tasks
      */
-    public function reconfigure(PackageInterface $package): void
+    public function reconfigure(): void
     {
         $flow = new HordeReconfigureFlow(new ComposerIoAdapter($this->io), $this->composer);
         $flow->run();

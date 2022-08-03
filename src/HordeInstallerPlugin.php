@@ -37,7 +37,7 @@ class HordeInstallerPlugin implements PluginInterface, EventSubscriberInterface,
     /**
      * Expose which events are handled by which handler
      *
-     * @return string[]
+     * @return array<string, array<int, int|string>>
      */
     public static function getSubscribedEvents(): array
     {
@@ -49,7 +49,7 @@ class HordeInstallerPlugin implements PluginInterface, EventSubscriberInterface,
     /**
      * Trigger reconfigure command only once per action
      *
-     * @param PackageEvent $event
+     * @param Event $event
      * @return void
      */
     public function reconfigureHandler(Event $event): void

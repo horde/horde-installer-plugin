@@ -53,7 +53,7 @@ class ConfigLinker
             $contentInfo = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($appConfigDir));
             foreach ($contentInfo as $contentItem) {
                 // Don't symlink dirs
-                if ($contentItem->isDir()) {
+                if ($contentItem instanceof RecursiveDirectoryIterator  && $contentItem->isDir()) {
                     continue;
                 }
                 // Generate missing dirs below targetdir
