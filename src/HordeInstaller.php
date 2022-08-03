@@ -21,14 +21,9 @@ class HordeInstaller extends LibraryInstaller
 {
     /**
      * Handle horde-specific postinstall tasks
-     *
-     * @param PackageInterface $package  The package installed or updated
      */
-    public function postinstall(PackageInterface $package): void
+    public function reconfigure(PackageInterface $package): void
     {
-        if (!$this->supports($package->getType())) {
-            return;
-        }
         $flow = new HordeReconfigureFlow(new ComposerIoAdapter($this->io), $this->composer);
         $flow->run();
     }

@@ -8,6 +8,7 @@ use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Installer\PackageEvent;
+use Composer\Script\Event;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\DependencyResolver\Operation\InstallOperation;
 use Composer\DependencyResolver\Operation\UpdateOperation;
@@ -51,9 +52,9 @@ class HordeInstallerPlugin implements PluginInterface, EventSubscriberInterface,
      * @param PackageEvent $event
      * @return void
      */
-    public function reconfigureHandler(PackageEvent $event): void
+    public function reconfigureHandler(Event $event): void
     {
-        $this->installer->postinstall($package);
+        $this->installer->reconfigure();
     }
 
     /**
