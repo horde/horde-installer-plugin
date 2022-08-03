@@ -1,11 +1,15 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace Horde\Composer;
-use \Composer\Util\Filesystem;
-use \DirectoryIterator;
+
+use Composer\Util\Filesystem;
+use DirectoryIterator;
+
 /**
  * Themes Handler class
- * 
+ *
  * This class is specifically designed to require as few as possible composer infrastructure.
  * It should also be useful for offline / register-only scenarios.
  */
@@ -28,6 +32,8 @@ class ThemesHandler
      */
     public $themesCatalog;
 
+    protected string $themesDir;
+
     public function __construct(Filesystem $filesystem, string $rootDir)
     {
         $this->filesystem = $filesystem;
@@ -38,7 +44,7 @@ class ThemesHandler
 
     /**
      * Create the basic themes folder if missing
-     * 
+     *
      * @return void
      */
     protected function ensureThemesFolderExists(): void
@@ -65,7 +71,7 @@ class ThemesHandler
         }
     }
 
-    public function setupPackagedThemes()
+    public function setupPackagedThemes(): void
     {
         foreach ($this->themesCatalog->toArray() as $theme) {
             foreach ($theme as $app => $appTheme) {
@@ -80,14 +86,13 @@ class ThemesHandler
 
     /**
      * Rebuild the link structure from index
-     * 
+     *
      * TODO: Unregister themes which are not really installed but indexed
      */
-    public function setupThemes()
+    public function setupThemes(): void
     {
         $this->ensureThemesFolderExists();
         $this->setupDefaultTheme();
         $this->setupPackagedThemes();
     }
-
 }

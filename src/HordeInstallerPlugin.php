@@ -1,67 +1,71 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace Horde\Composer;
 
 use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
+use Composer\Installer\PackageEvent;
+use Composer\Script\Event;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\DependencyResolver\Operation\InstallOperation;
 use Composer\DependencyResolver\Operation\UpdateOperation;
+use Composer\Plugin\Capable;
 
-class HordeInstallerPlugin implements PluginInterface, EventSubscriberInterface
+class HordeInstallerPlugin implements PluginInterface, EventSubscriberInterface, Capable
 {
-    protected $installer;
+    protected HordeInstaller $installer;
 
-    public function activate(Composer $composer, IOInterface $io)
+    public function activate(Composer $composer, IOInterface $io): void
     {
         $this->installer = new HordeInstaller($io, $composer);
         $composer->getInstallationManager()->addInstaller($this->installer);
     }
 
-    public function deactivate(Composer $composer, IOInterface $io)
+    public function deactivate(Composer $composer, IOInterface $io): void
     {
         $composer->getInstallationManager()->removeInstaller($this->installer);
     }
 
-    public function uninstall(Composer $composer, IOInterface $io)
+    public function uninstall(Composer $composer, IOInterface $io): void
     {
         return;
     }
 
-    public static function getSubscribedEvents()
+    /**
+     * Expose which events are handled by which handler
+     *
+     * @return array<string, array<int, int|string>>
+     */
+    public static function getSubscribedEvents(): array
     {
         return [
-            'post-package-install' => 'postInstallHandler',
-            'post-package-update' => 'postUpdateHandler',
+            'post-autoload-dump' => array('reconfigureHandler', 1)
         ];
     }
 
-    public function postInstallHandler($event)
+    /**
+     * Trigger reconfigure command only once per action
+     *
+     * @param Event $event
+     * @return void
+     */
+    public function reconfigureHandler(Event $event): void
     {
-        $ops = $event->getOperations();
-        foreach($ops as $op) {
-            if ($op instanceof InstallOperation) {
-                $package = $op->getPackage();
-                try {
-                    $this->installer->postinstall($package);
-                } catch (\Exception $e) {
-                }
-            }
-        }
+        $this->installer->reconfigure();
     }
 
-    public function postUpdateHandler($event)
+    /**
+     * Expose capabilities
+     *
+     * @return string[]
+     */
+    public function getCapabilities(): array
     {
-        $ops = $event->getOperations();
-        foreach($ops as $op) {
-            if ($op instanceof UpdateOperation) {
-                $package = $op->getTargetPackage();
-                try {
-                    $this->installer->postinstall($package);
-                } catch (\Exception $e) {
-                }
-            }
-        }
+        return [
+            'Composer\Plugin\Capability\CommandProvider' => 'Horde\Composer\CommandProvider',
+        ];
     }
 }

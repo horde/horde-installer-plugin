@@ -5,6 +5,12 @@
     "autoload": {
         "psr-4": {"Horde\\Composer\\": "src/"}
     },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://horde-satis.maintaina.com/"
+        }
+    ],
     "extra": {
         "class": "Horde\\Composer\\HordeInstallerPlugin"
     },
@@ -12,6 +18,7 @@
         "composer-plugin-api": "~2.0"
     },
     "require-dev": {
-        "composer/composer": "~2.0"
+        "composer/composer": "~2.0",
+        "horde/test": "^3"
     }
 }
