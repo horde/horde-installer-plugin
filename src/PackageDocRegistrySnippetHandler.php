@@ -1,15 +1,19 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace Horde\Composer;
-use \DirectoryIterator;
+
+use DirectoryIterator;
 use Composer\Util\Filesystem;
+
 /**
  * Look for registry snippets in all app's doc/registry.d folder
- * 
+ *
  * An installed app may be present in the default registry or it may provide
  * a snippet in its doc/registry.d folder. Otherwise the admin must place the
  * snippet into the var/config/horde/registry.d folder himself.
- * 
+ *
  * A snippet should never override an existing file
  */
 class PackageDocRegistrySnippetHandler
@@ -41,8 +45,7 @@ class PackageDocRegistrySnippetHandler
     public function handle(): void
     {
         $this->filesystem->ensureDirectoryExists($this->configDir);
-        foreach ($this->apps as $app)
-        {
+        foreach ($this->apps as $app) {
             $sourceDir = $this->webDir . '/' . $app . '/doc/registry.d';
             if (!is_dir($sourceDir)) {
                 continue;
@@ -59,4 +62,3 @@ class PackageDocRegistrySnippetHandler
         }
     }
 }
-

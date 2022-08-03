@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace Horde\Composer;
 
 use Composer\Plugin\Capability\CommandProvider as CommandProviderCapability;
@@ -11,6 +13,6 @@ class CommandProvider implements CommandProviderCapability
 {
     public function getCommands()
     {
-        return [new HordeReconfigureCommand];
+        return [new HordeReconfigureCommand()];
     }
 }

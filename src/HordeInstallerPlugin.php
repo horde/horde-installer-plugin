@@ -1,11 +1,14 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace Horde\Composer;
 
 use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Installer\PackageEvent;
+use Composer\Script\Event;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\DependencyResolver\Operation\InstallOperation;
 use Composer\DependencyResolver\Operation\UpdateOperation;
@@ -32,56 +35,26 @@ class HordeInstallerPlugin implements PluginInterface, EventSubscriberInterface,
     }
 
     /**
-     * Exposre which events are handled by which handler
+     * Expose which events are handled by which handler
      *
-     * @return string[]
+     * @return array<string, array<int, int|string>>
      */
     public static function getSubscribedEvents(): array
     {
         return [
-            'post-package-install' => 'postInstallHandler',
-            'post-package-update' => 'postUpdateHandler',
+            'post-autoload-dump' => array('reconfigureHandler', 1)
         ];
     }
 
     /**
-     * Handler for post-package-install
+     * Trigger reconfigure command only once per action
      *
-     * @param PackageEvent $event
+     * @param Event $event
      * @return void
      */
-    public function postInstallHandler(PackageEvent $event): void
+    public function reconfigureHandler(Event $event): void
     {
-        $ops = $event->getOperations();
-        foreach($ops as $op) {
-            if ($op instanceof InstallOperation) {
-                $package = $op->getPackage();
-                try {
-                    $this->installer->postinstall($package);
-                } catch (\Exception $e) {
-                }
-            }
-        }
-    }
-
-    /**
-     * Handler for post-package-update
-     *
-     * @param PackageEvent $event
-     * @return void
-     */
-    public function postUpdateHandler(PackageEvent $event): void
-    {
-        $ops = $event->getOperations();
-        foreach($ops as $op) {
-            if ($op instanceof UpdateOperation) {
-                $package = $op->getTargetPackage();
-                try {
-                    $this->installer->postinstall($package);
-                } catch (\Exception $e) {
-                }
-            }
-        }
+        $this->installer->reconfigure();
     }
 
     /**

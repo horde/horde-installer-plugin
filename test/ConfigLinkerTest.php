@@ -1,7 +1,10 @@
 <?php
+
 namespace Horde\Composer\Test;
-use \PHPUnit\Framework\TestCase;
-use \Horde\Composer\ConfigLinker;
+
+use PHPUnit\Framework\TestCase;
+use Horde\Composer\ConfigLinker;
+
 /**
  * @author     Ralf Lang <lang@b1-systems.de>
  * @license    http://www.horde.org/licenses/lgpl LGPL
@@ -27,13 +30,13 @@ class ConfigLinkerTest extends TestCase
         $this->assertFileDoesNotExist($this->fixture . '/web/lunch/config/conf.php');
     }
 
-   public function tearDown(): void
+    public function tearDown(): void
     {
         array_map('unlink', glob($this->fixture . '/web/horde/config/*.php'));
         array_map('unlink', glob($this->fixture . '/web/lunch/config/*.php'));
         if (is_dir($this->fixture . '/web/horde/config/registry.d/')) {
             array_map('unlink', glob($this->fixture . '/web/horde/config/registry.d/*'));
-            rmdir($this->fixture . '/web/horde/config/registry.d/');    
+            rmdir($this->fixture . '/web/horde/config/registry.d/');
         }
     }
 }
