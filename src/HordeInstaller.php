@@ -44,6 +44,7 @@ class HordeInstaller extends LibraryInstaller
                 return parent::getInstallPath($package);
         }
     }
+
     /**
      * {@inheritDoc}
      * @return bool
