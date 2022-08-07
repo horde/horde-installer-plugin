@@ -46,7 +46,8 @@ class PackageDocRegistrySnippetHandler
     {
         $this->filesystem->ensureDirectoryExists($this->configDir);
         foreach ($this->apps as $app) {
-            $sourceDir = $this->webDir . '/' . $app . '/doc/registry.d';
+            list($vendor, $name) = explode('/', $app, 2);
+            $sourceDir = $this->webDir . '/' . $name . '/doc/registry.d';
             if (!is_dir($sourceDir)) {
                 continue;
             }
