@@ -41,9 +41,12 @@ class HordeInstallerPlugin implements PluginInterface, EventSubscriberInterface,
      */
     public static function getSubscribedEvents(): array
     {
-        return [
-            'post-autoload-dump' => array('reconfigureHandler', 1)
-        ];
+        $events = [];
+        if (has_method($this->installer, 'reconfigure')) {
+        {
+            $events['post-autoload-dump'] => array('reconfigureHandler', 1)
+        }
+        return $events[];
     }
 
     /**
