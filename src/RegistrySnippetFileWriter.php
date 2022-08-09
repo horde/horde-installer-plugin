@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Horde\Composer;
+
 use Composer\Util\Filesystem;
 
 class RegistrySnippetFileWriter
@@ -61,8 +62,7 @@ $app_webroot = \'%s\';
         }
 
         // Ensure we have a base
-        foreach ($this->apps as $app)
-        {
+        foreach ($this->apps as $app) {
             list($appVendor, $appName) = explode('/', $app);
             if ($app == 'horde/horde') {
                 $registryAppFilename = $this->configRegistryDir . '/01-location-' . $appName . '.php';
@@ -80,13 +80,13 @@ $app_webroot = \'%s\';
                 $registryAppFilename = $this->configRegistryDir . '/02-location-' . $appName . '.php';
                 $registryAppSnippet = '<?php' . PHP_EOL .
                 '$this->applications[\'' . $appName . '\'][\'fileroot\'] = "$deployment_fileroot/' . $appName . '";' . PHP_EOL .
-                '$this->applications[\'' . $appName . '\'][\'webroot\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../' . $app . "';"  . PHP_EOL .
-                '$this->applications[\'' . $appName . '\'][\'themesfs\'] = $this->applications[\'horde\'][\'fileroot\'] . \'/../themes/' . $app . '/\';' . PHP_EOL .
-                '$this->applications[\'' . $appName . '\'][\'themesuri\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../themes/' . $app . '/\';';
+                '$this->applications[\'' . $appName . '\'][\'webroot\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../' . $appName . "';"  . PHP_EOL .
+                '$this->applications[\'' . $appName . '\'][\'themesfs\'] = $this->applications[\'horde\'][\'fileroot\'] . \'/../themes/' . $appName . '/\';' . PHP_EOL .
+                '$this->applications[\'' . $appName . '\'][\'themesuri\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../themes/' . $appName . '/\';';
             }
             if (!file_exists($registryAppFilename)) {
                 file_put_contents($registryAppFilename, $registryAppSnippet);
             }
         }
-    }    
+    }
 }
