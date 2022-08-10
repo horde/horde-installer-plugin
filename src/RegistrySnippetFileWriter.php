@@ -66,7 +66,7 @@ $app_webroot = \'%s\';
             list($appVendor, $appName) = explode('/', $app);
             if ($app == 'horde/horde') {
                 $registryAppFilename = $this->configRegistryDir . '/01-location-' . $appName . '.php';
-                $registryAppSnippet =
+                $registryAppSnippet = '<?php' . PHP_EOL .
                 '$this->applications[\'horde\'][\'fileroot\'] = $app_fileroot;' . PHP_EOL .
                 '$this->applications[\'horde\'][\'webroot\'] = $app_webroot;' . PHP_EOL .
                 '$this->applications[\'horde\'][\'jsfs\'] = $deployment_fileroot . \'/js/horde/\';' . PHP_EOL .
