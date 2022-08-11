@@ -16,7 +16,6 @@ class RegistrySnippetFileWriter
     private array $apps;
     private string $configDir;
     private string $configRegistryDir;
-    private string $vendorDir;
     private string $webDir;
 
     private Filesystem $filesystem;
@@ -36,7 +35,6 @@ class RegistrySnippetFileWriter
          * The config dir for the registry snippets
          */
         $this->configRegistryDir = $this->configDir . '/horde/registry.d';
-        $this->vendorDir = $baseDir . '/vendor';
         $this->webDir = $baseDir . '/web';
         $this->apps = $apps;
     }
