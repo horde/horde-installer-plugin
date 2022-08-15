@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Horde\Composer;
 
 use Composer\Composer;
-use Composer\IO\IOInterface;
-use Composer\Plugin\PluginInterface;
-use Composer\Installer\PackageEvent;
-use Composer\Script\Event;
-use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\DependencyResolver\Operation\InstallOperation;
 use Composer\DependencyResolver\Operation\UpdateOperation;
+use Composer\EventDispatcher\EventSubscriberInterface;
+use Composer\Installer\PackageEvent;
+use Composer\IO\IOInterface;
 use Composer\Plugin\Capable;
+use Composer\Plugin\PluginInterface;
+use Composer\Script\Event;
 
 class HordeInstallerPlugin implements PluginInterface, EventSubscriberInterface, Capable
 {

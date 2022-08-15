@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Horde\Composer;
 
-use DirectoryIterator;
 use Composer\Util\Filesystem;
+use DirectoryIterator;
 
 class PresetHandler
 {

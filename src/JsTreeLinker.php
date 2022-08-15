@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Horde\Composer;
 
+use Composer\Util\Filesystem;
 use DirectoryIterator;
+use ErrorException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use Composer\Util\Filesystem;
-use ErrorException;
 
 class JsTreeLinker
 {
@@ -72,7 +72,7 @@ class JsTreeLinker
         $this->filesystem->ensureDirectoryExists($this->jsDir);
         // app javascript dirs are exposed under js/$app
         foreach ($this->apps as $app) {
-            list($vendor, $name) =  explode('/', $app, 2);
+            [$vendor, $name] =  explode('/', $app, 2);
             $appPath = $this->webDir . '/' . $name;
             $jsSourcePath = $appPath . '/js';
             if (!$this->filesystem->isReadable($jsSourcePath)) {
@@ -83,7 +83,7 @@ class JsTreeLinker
         }
         // Library javascript dirs are exposed under js/horde/
         foreach ($this->libs as $lib) {
-            list($vendor, $name) =  explode('/', $lib, 2);
+            [$vendor, $name] =  explode('/', $lib, 2);
             $libraryPath = $this->vendorDir . '/'. $vendor . '/' . $name;
             $jsSourcePath = $libraryPath . '/js';
             if (!$this->filesystem->isReadable($jsSourcePath)) {

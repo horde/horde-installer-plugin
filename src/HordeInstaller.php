@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Horde\Composer;
 
 use Composer\Factory;
-use Composer\Repository\InstalledRepositoryInterface;
-use Composer\Package\PackageInterface;
 use Composer\Installer\LibraryInstaller;
-use React\Promise\PromiseInterface;
-use Horde\Composer\IOAdapter\ComposerIoAdapter;
+use Composer\Package\PackageInterface;
+use Composer\Repository\InstalledRepositoryInterface;
 use ErrorException;
+use Horde\Composer\IOAdapter\ComposerIoAdapter;
+use React\Promise\PromiseInterface;
 
 /**
  * Installer implementation for horde apps and themes

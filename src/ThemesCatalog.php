@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Horde\Composer;
 
-use json_decode;
-use file_get_contents;
 use DirectoryIterator;
 use Exception;
+use file_get_contents;
+use json_decode;
 
 /**
  * Encapsulate handling the themes catalog
@@ -83,7 +83,7 @@ class ThemesCatalog
                 'linkDir' => $entry->getPathname(),
                 'themeName' => $themeName,
                 'packageName' => $packageName,
-                'vendorName' => $vendorName
+                'vendorName' => $vendorName,
             ];
         }
         $this->save();

@@ -7,10 +7,10 @@ declare(strict_types=1);
 
 namespace Horde\Composer;
 
-use Composer\PartialComposer;
-use Horde\Composer\IOAdapter\FlowIoInterface;
 use Composer\InstalledVersions;
+use Composer\PartialComposer;
 use Composer\Util\Filesystem;
+use Horde\Composer\IOAdapter\FlowIoInterface;
 use RuntimeException;
 
 class HordeReconfigureFlow

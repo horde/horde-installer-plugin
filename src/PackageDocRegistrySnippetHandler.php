@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Horde\Composer;
 
-use DirectoryIterator;
 use Composer\Util\Filesystem;
+use DirectoryIterator;
 
 /**
  * Look for registry snippets in all app's doc/registry.d folder
@@ -46,7 +46,7 @@ class PackageDocRegistrySnippetHandler
     {
         $this->filesystem->ensureDirectoryExists($this->configDir);
         foreach ($this->apps as $app) {
-            list($vendor, $name) = explode('/', $app, 2);
+            [$vendor, $name] = explode('/', $app, 2);
             $sourceDir = $this->webDir . '/' . $name . '/doc/registry.d';
             if (!is_dir($sourceDir)) {
                 continue;

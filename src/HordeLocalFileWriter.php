@@ -46,7 +46,7 @@ class HordeLocalFileWriter
     private function processApp(string $app): void
     {
         $hordeWebDir = $this->webDir . '/horde';
-        list($vendor, $name) = explode('/', $app, 2);
+        [$vendor, $name] = explode('/', $app, 2);
         $this->filesystem->ensureDirectoryExists($this->configDir . "/$name");
         $path = $this->configDir . "/$name/horde.local.php";
         $hordeLocalFileContent = sprintf(
