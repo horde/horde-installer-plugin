@@ -26,17 +26,17 @@ class ConfigLinkerTest extends TestCase
     {
         $this->linker->run();
         // Assert files are linked when target dir exists
-        $this->assertFileExists($this->fixture . '/web/horde/config/hooks.php');
-        $this->assertFileDoesNotExist($this->fixture . '/web/lunch/config/conf.php');
+        $this->assertFileExists($this->fixture . '/vendor/horde/horde/config/hooks.php');
+        $this->assertFileDoesNotExist($this->fixture . '/vendor/horde/lunch/config/conf.php');
     }
 
     public function tearDown(): void
     {
-        array_map('unlink', glob($this->fixture . '/web/horde/config/*.php'));
-        array_map('unlink', glob($this->fixture . '/web/lunch/config/*.php'));
-        if (is_dir($this->fixture . '/web/horde/config/registry.d/')) {
-            array_map('unlink', glob($this->fixture . '/web/horde/config/registry.d/*'));
-            rmdir($this->fixture . '/web/horde/config/registry.d/');
+        array_map('unlink', glob($this->fixture . '/vendor/horde/horde/config/*.php'));
+        array_map('unlink', glob($this->fixture . '/vendor/horde/lunch/config/*.php'));
+        if (is_dir($this->fixture . '/vendor/horde/horde/config/registry.d/')) {
+            array_map('unlink', glob($this->fixture . '/vendor/horde/horde/config/registry.d/*'));
+            rmdir($this->fixture . '/vendor/horde/horde/config/registry.d/');
         }
     }
 }

@@ -36,9 +36,9 @@ class HordeInstaller extends LibraryInstaller
     {
         switch ($package->getType()) {
             case 'horde-application':
-                [$vendorName, $packageName] = explode('/', $package->getName(), 2);
-                $projectRoot = (string)realpath(dirname(Factory::getComposerFile()));
-                return $projectRoot . '/web/' . $packageName;
+                /* [$vendorName, $packageName] = explode('/', $package->getName(), 2);
+                   $projectRoot = (string)realpath(dirname(Factory::getComposerFile()));
+                   return $projectRoot . '/web/' . $packageName;*/
             case 'horde-library':
             default:
                 return parent::getInstallPath($package);
@@ -47,6 +47,7 @@ class HordeInstaller extends LibraryInstaller
 
     /**
      * {@inheritDoc}
+     * @param string $packageType
      * @return bool
      */
     public function supports($packageType)

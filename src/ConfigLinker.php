@@ -12,12 +12,12 @@ class ConfigLinker
 {
     private string $baseDir;
     private string $configDir;
-    private string $webDir;
+    private string $vendorDir;
 
     public function __construct(string $baseDir)
     {
         $this->baseDir = $baseDir;
-        $this->webDir= $baseDir . '/web';
+        $this->vendorDir = $baseDir . '/vendor';
         $this->configDir = $this->baseDir . '/var/config';
     }
     /**
@@ -45,7 +45,8 @@ class ConfigLinker
             $app = $appFileInfo->getFilename();
             // Next if no corresponding web/$app/config dir exists
             $appConfigDir = $appFileInfo->getPathname();
-            $targetDir = $this->webDir . '/' . $app . '/config';
+            // TODO: Make this work for other vendors
+            $targetDir = $this->vendorDir . '/horde//' . $app . '/config';
             if (!is_dir($targetDir)) {
                 continue;
             }
