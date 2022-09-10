@@ -13,12 +13,14 @@ class ConfigLinker
     private string $baseDir;
     private string $configDir;
     private string $vendorDir;
+    private string $mode = 'symlink';
 
-    public function __construct(string $baseDir)
+    public function __construct(string $baseDir, string $mode = 'symlink')
     {
         $this->baseDir = $baseDir;
         $this->vendorDir = $baseDir . '/vendor';
         $this->configDir = $this->baseDir . '/var/config';
+        $this->mode = $mode;
     }
     /**
      * Symlink contents of var/config
@@ -68,7 +70,7 @@ class ConfigLinker
                 if (file_exists($linkName)) {
                     continue;
                 }
-                symlink($sourceName, $linkName);
+                $this->mode == 'symlink' ? symlink($sourceName, $linkName) : copy($sourceName, $linkName);
             }
             // Do not overwrite existing files or links
         }

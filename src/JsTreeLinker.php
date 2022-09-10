@@ -28,6 +28,7 @@ class JsTreeLinker
      * @var string[]
      */
     private array $libs;
+    private string $mode = 'symlink';
 
     /**
      * Constructor
@@ -41,7 +42,8 @@ class JsTreeLinker
         Filesystem $filesystem,
         string $baseDir,
         array $apps = [],
-        array $libs = []
+        array $libs = [],
+        string $mode = 'symlink'
     ) {
         $this->filesystem = $filesystem;
         $this->vendorDir = $baseDir . '/vendor';
@@ -49,6 +51,7 @@ class JsTreeLinker
         $this->jsDir = $this->webDir . '/js';
         $this->apps = $apps;
         $this->libs = $libs;
+        $this->mode = $mode;
     }
     /**
      * Build the web/js/ symlink tree
@@ -112,7 +115,16 @@ class JsTreeLinker
             }
             $sourceFile = $sourceDir . '/' . $sourceItem;
             $targetFile = $targetDir . '/' . $sourceItem;
-            $this->filesystem->relativeSymlink($sourceFile, $targetFile);
+            if ($this->mode === 'symlink') {
+                $this->filesystem->relativeSymlink($sourceFile, $targetFile);
+            } else {
+                if (is_file($sourceFile)) {
+                    copy($sourceFile, $targetFile);
+                }
+                if (is_dir($sourceFile)) {
+                    $this->linkDir($sourceFile, $targetFile);
+                }
+            }
         }
         closedir($sourceDirHandle);
     }

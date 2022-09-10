@@ -34,7 +34,8 @@ class HordeReconfigureCommand extends BaseCommand
         if (!$composer) {
             die('Error: Command was run without a relation to composer itself');
         }
-        $flow = new HordeReconfigureFlow(new IOAdapter\SymphonyOutputAdapter($output), $composer);
+        $mode = \strncasecmp(\PHP_OS, 'WIN', 3) === 0 ? 'copy' : 'symlink';
+        $flow = new HordeReconfigureFlow(new IOAdapter\SymphonyOutputAdapter($output), $composer, $mode);
         return $flow->run();
     }
 }
