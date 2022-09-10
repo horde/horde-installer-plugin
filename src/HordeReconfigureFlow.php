@@ -17,11 +17,16 @@ class HordeReconfigureFlow
 {
     private FlowIoInterface $io;
     private PartialComposer $composer;
+    /**
+     * Modes: symlink, copy
+     */
+    private string $mode = 'symlink';
 
-    public function __construct(FlowIoInterface $io, PartialComposer $composer)
+    public function __construct(FlowIoInterface $io, PartialComposer $composer, string $mode = 'symlink')
     {
         $this->io = $io;
         $this->composer = $composer;
+        $this->mode = $mode;
     }
 
     /**
@@ -45,7 +50,7 @@ class HordeReconfigureFlow
         // We could simply ask InstalledVersions here, too
         $rootPackageDir = dirname($vendorDir);
         $this->io->writeln('Applying /presets for absent files in /var/config');
-        $appLinker = new ApplicationLinker($filesystem, $hordeApps, $rootPackageDir, 'symlink');
+        $appLinker = new ApplicationLinker($filesystem, $hordeApps, $rootPackageDir, $this->mode);
         $appLinker->run();
         $presetHandler = new PresetHandler($rootPackageDir, $filesystem);
         $presetHandler->handle();
@@ -67,7 +72,7 @@ class HordeReconfigureFlow
         $hordeLocalWriter = new HordeLocalFileWriter(
             $filesystem,
             $rootPackageDir,
-            $hordeApps
+            $hordeApps,
         );
         $hordeLocalWriter->run();
         $this->io->writeln('Linking app configs to /web Dir');
@@ -78,11 +83,12 @@ class HordeReconfigureFlow
             $filesystem,
             $rootPackageDir,
             $hordeApps,
-            $hordeLibraries
+            $hordeLibraries,
+            $this->mode
         );
         $jsLinker->run();
         $this->io->writeln('Linking themes tree to /web/themes');
-        $themesHandler = new ThemesHandler($filesystem, $rootPackageDir);
+        $themesHandler = new ThemesHandler($filesystem, $rootPackageDir, $this->mode);
         $themesHandler->setupThemes();
         return 0;
     }

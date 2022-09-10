@@ -34,12 +34,15 @@ class ThemesHandler
 
     protected string $themesDir;
 
-    public function __construct(Filesystem $filesystem, string $rootDir)
+    private string $mode = 'symlink';
+
+    public function __construct(Filesystem $filesystem, string $rootDir, string $mode = 'symlink')
     {
         $this->filesystem = $filesystem;
         $this->rootDir = $rootDir;
         $this->themesDir = $rootDir . '/web/themes/';
         $this->themesCatalog = new ThemesCatalog($rootDir);
+        $this->mode = $mode;
     }
 
     /**
@@ -66,7 +69,7 @@ class ThemesHandler
                 $linkDir = $appDir . '/default';
                 // Create themes/$app/default symlink
                 $this->filesystem->ensureDirectoryExists($appDir);
-                $this->filesystem->relativeSymlink($target, $linkDir);
+                $this->mode === 'symlink' ? $this->filesystem->relativeSymlink($target, $linkDir) : copy ($target, $linkDir);
             }
         }
     }
@@ -79,7 +82,7 @@ class ThemesHandler
                 $linkDir = $appDir . '/' . $appTheme['themeName'];
                 $target = $appTheme['linkDir'];
                 $this->filesystem->ensureDirectoryExists($appDir);
-                $this->filesystem->relativeSymlink($target, $linkDir);
+                $this->mode === 'symlink' ? $this->filesystem->relativeSymlink($target, $linkDir) : copy($target, $linkDir);
             }
         }
     }
