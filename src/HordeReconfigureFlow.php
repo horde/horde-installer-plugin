@@ -76,7 +76,7 @@ class HordeReconfigureFlow
         );
         $hordeLocalWriter->run();
         $this->io->writeln('Linking app configs to /web Dir');
-        $configLinker = new ConfigLinker($rootPackageDir);
+        $configLinker = new ConfigLinker($rootPackageDir, $this->mode);
         $configLinker->run();
         $this->io->writeln('Linking javascript tree to /web/js');
         $jsLinker = new JsTreeLinker(
