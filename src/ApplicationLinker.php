@@ -67,6 +67,25 @@ class ApplicationLinker
             }
             // create the app's main dir in the web/ tree
             $this->filesystem->ensureDirectoryExists($appWebDir);
+            // Items we won't copy or link to the web tree
+            $filterList = [
+                'files' => [
+                    'LICENSE', 'composer.json', 'composer.lock', '.gitattributes',
+                    '.horde.yml', '.travis.yml', 'package.xml', 'phpunit.xml.dist',
+                    '.gitignore', 'README.rst',
+                ],
+                'dirs' => [
+                    'doc', 
+                    'test',
+                    'bin',
+                    'script',
+                    'scripts',
+                    'static', // static should be ensured to exist in webdir.
+                    '.git',
+                    '.github',
+                ]
+            ];
+
             if ($this->mode === 'symlink') {
                 // create links to the app's subdirs and files in the web/ tree, omitting select dirs and files
                 foreach (new DirectoryIterator($appVendorDir) as $appFileInfo) {
@@ -77,12 +96,7 @@ class ApplicationLinker
                     if ($appFileInfo->isDir()) {
                         if (in_array(
                             $name,
-                            [
-                                'doc', 'test',
-                                'bin', 'script',
-                                'scripts', 'static', // static should be ensured to exist in webdir.
-                                '.git', '.github',
-                            ]
+                            $filterList['dirs']
                         )) {
                             continue;
                         }
@@ -93,11 +107,7 @@ class ApplicationLinker
                     }
                     if (in_array(
                         $name,
-                        [
-                            'LICENSE', 'composer.json', 'composer.lock', '.gitattributes',
-                            '.horde.yml', '.travis.yml', 'package.xml', 'phpunit.xml.dist',
-                            '.gitignore', 'README.rst',
-                        ]
+                        $filterList['files']
                     )) {
                         continue;
                     }
@@ -106,6 +116,9 @@ class ApplicationLinker
                         $appWebDir . '/' . $name
                     );
                 }
+            } else {
+                $copy = new RecursiveCopy($appVendorDir, $appWebDir, array_merge($filterList['files'], $filterList['dirs']));
+                $copy->copy();
             }
         }
     }

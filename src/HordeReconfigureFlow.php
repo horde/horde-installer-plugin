@@ -50,8 +50,6 @@ class HordeReconfigureFlow
         // We could simply ask InstalledVersions here, too
         $rootPackageDir = dirname($vendorDir);
         $this->io->writeln('Applying /presets for absent files in /var/config');
-        $appLinker = new ApplicationLinker($filesystem, $hordeApps, $rootPackageDir, $this->mode);
-        $appLinker->run();
         $presetHandler = new PresetHandler($rootPackageDir, $filesystem);
         $presetHandler->handle();
         $this->io->writeln('Looking for registry snippets from apps');
@@ -88,8 +86,16 @@ class HordeReconfigureFlow
         );
         $jsLinker->run();
         $this->io->writeln('Linking themes tree to /web/themes');
-        $themesHandler = new ThemesHandler($filesystem, $rootPackageDir, $this->mode);
+        $themesHandler = new ThemesHandler(
+            $filesystem,
+            $rootPackageDir,
+            $vendorDir,
+            $this->mode
+        );
         $themesHandler->setupThemes();
+        // ApplicationLinker must run after all changes to /vendor
+        $appLinker = new ApplicationLinker($filesystem, $hordeApps, $rootPackageDir, $this->mode);
+        $appLinker->run();
         return 0;
     }
 }
