@@ -11,6 +11,8 @@ use json_decode;
 
 /**
  * Encapsulate handling the themes catalog
+ * 
+ * @internal No Backward Compatibility promise as of now, refactoring overdue
  */
 class ThemesCatalog
 {
@@ -78,6 +80,15 @@ class ThemesCatalog
                 continue;
             }
             $app = $entry->getFilename();
+            if (!is_string($app)) {
+                throw new Exception('Unexpected Non-String from Filename: ' . gettype($app) . (string) $app);
+            }
+            if (isset($this->catalog[$themeName]) && !is_iterable($this->catalog[$themeName])) {
+                throw new Exception('Catalog content is not valid');
+            }
+            if (!is_array($this->catalog)) {
+                throw new Exception('Catalog content is not valid: No array access');
+            }
             $this->catalog[$themeName][$app] = [
                 'provider' => $installDir,
                 'linkDir' => $entry->getPathname(),

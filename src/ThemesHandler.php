@@ -6,7 +6,7 @@ namespace Horde\Composer;
 
 use Composer\Util\Filesystem;
 use DirectoryIterator;
-
+use Exception;
 /**
  * Themes Handler class
  *
@@ -25,8 +25,8 @@ class ThemesHandler
      * The root package's dir
      * @var string
      */
-    protected $rootDir;
-    protected $vendorDir;
+    protected string $rootDir;
+    protected string $vendorDir;
 
     /**
      * @var ThemesCatalog
@@ -115,6 +115,9 @@ class ThemesHandler
     public function setupPackagedThemes(): void
     {
         foreach ($this->themesCatalog->toArray() as $theme) {
+            if (!is_iterable($theme)) {
+                throw new Exception('ThemesCatalog is invalid');
+            }
             foreach ($theme as $app => $appTheme) {
                 $appDir = $this->themesDir . '/' . $app;
                 $linkDir = $appDir . '/' . $appTheme['themeName'];

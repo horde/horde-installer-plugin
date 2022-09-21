@@ -8,6 +8,8 @@ use Composer\Util\Filesystem;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use FilesystemIterator;
+use SplFileInfo;
+
 /**
  * Recursive copy handler
  * 
@@ -17,10 +19,22 @@ class RecursiveCopy
 {
     private string $sourceDir;
     private string $targetDir;
+
+    /**
+     * @var array<string>
+     */
     private array $filter = [
         '.',
         '..'
     ];
+ 
+    /**
+     * Create a recursive copy operation pending execution
+     * 
+     * @param string $sourceDir Where to copy from
+     * @param string $targetDir Where to copy to
+     * @param array<string> $filter Files or dirs to ignore, including subdir content.
+     */
     public function __construct(string $sourceDir, string $targetDir, array $filter = [])
     {
         $this->sourceDir = $sourceDir;
@@ -28,7 +42,10 @@ class RecursiveCopy
         $this->filter = array_unique(array_merge($filter, $this->filter));
     }
 
-    public function copy()
+    /**
+     * Run a recursive copy
+     */
+    public function copy(): void
     {
         if (!file_exists($this->targetDir)) {
             // TODO: Exception if fails
@@ -37,11 +54,21 @@ class RecursiveCopy
         $this->copyLevel($this->sourceDir, $this->targetDir, $this->filter);        
     }
 
-    private function copyLevel(string $sourceDir, string $targetDir, array $filter)
+    /**
+     * Internal recursion function for copy()
+     * 
+     * @param string $sourceDir Where to copy from
+     * @param string $targetDir Where to copy to
+     * @param array<string> $filter Files or dirs to ignore, including subdir content.
+     */
+    private function copyLevel(string $sourceDir, string $targetDir, array $filter): void
     {
         // TODO LOG DEBUG sprintf("DIR ITERATE: %s to %s\n", $sourceDir, $targetDir);
         $iterator = new FilesystemIterator($sourceDir);
         foreach ($iterator as $splFileInfo) {
+            if (!($splFileInfo instanceof SplFileInfo)) {
+                continue;
+            }
             $basename = $splFileInfo->getBasename();
             if (in_array($basename, $this->filter)) {
                 continue;
