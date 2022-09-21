@@ -1,8 +1,10 @@
 <?php
+
 /**
  * Factor out the common workflow from the installer plugin and the reconfigure command
  * This simplifies code reuse
  */
+
 declare(strict_types=1);
 
 namespace Horde\Composer;
@@ -92,6 +94,16 @@ class HordeReconfigureFlow
             $vendorDir,
             $this->mode
         );
+
+        foreach ($hordeThemes as $theme) {
+            // register
+            [$vendorName, $packageName] = explode('/', $theme);
+            $themesHandler->themesCatalog->register(
+                $vendorName,
+                $packageName,
+                $vendorDir . '/' . $theme,
+            );
+        }
         $themesHandler->setupThemes();
         // ApplicationLinker must run after all changes to /vendor
         $appLinker = new ApplicationLinker($filesystem, $hordeApps, $rootPackageDir, $this->mode);
