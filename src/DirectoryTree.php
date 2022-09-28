@@ -90,11 +90,16 @@ class DirectoryTree
         return $this->getVendorDir() . '/' . $vendor . '/' . $package;
     }
 
+    /**
+     * List all vendors from which a package is installed
+     *
+     * @return iterable<string>
+     */
     public function getVendors(): iterable
     {
         $vendors = [];
         foreach (new DirectoryIterator($this->getVendorDir()) as $dir) {
-            if ($dir->isDot() || !$dir->isDir() || in_array($dir->getFileName, ['bin'])) {
+            if ($dir->isDot() || !$dir->isDir() || in_array($dir->getFileName(), ['bin'])) {
                 continue;
             }
             $vendors[] = $dir->getFileName();
@@ -102,6 +107,12 @@ class DirectoryTree
         return $vendors;
     }
 
+    /**
+     * List packages installed from a specific vendor
+     *
+     * @param string $vendor
+     * @return iterable<string> A list of packages in a vendor-specific dir
+     */
     public function getPackagesByVendor(string $vendor): iterable
     {
         $packages = [];
