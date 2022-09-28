@@ -25,7 +25,7 @@ class HordeInstaller extends LibraryInstaller
     public function reconfigure(): void
     {
         $mode = \strncasecmp(\PHP_OS, 'WIN', 3) === 0 ? 'copy' : 'symlink';
-        $flow = new HordeReconfigureFlow(new ComposerIoAdapter($this->io), $this->composer, $mode);
+        $flow = HordeReconfigureFlow::fromComposer($this->composer, new ComposerIoAdapter($this->io));
         $flow->run();
     }
 

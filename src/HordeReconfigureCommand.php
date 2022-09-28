@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Horde\Composer;
 
 use Composer\Command\BaseCommand;
+use Composer\Factory as ComposerFactory;
 use Composer\Plugin\Capability\CommandProvider as CommandProviderCapability;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Horde\Composer\IOAdapter\SymphonyOutputAdapter;
 
 class HordeReconfigureCommand extends BaseCommand
 {
@@ -34,8 +36,7 @@ class HordeReconfigureCommand extends BaseCommand
         if (!$composer) {
             die('Error: Command was run without a relation to composer itself');
         }
-        $mode = \strncasecmp(\PHP_OS, 'WIN', 3) === 0 ? 'copy' : 'symlink';
-        $flow = new HordeReconfigureFlow(new IOAdapter\SymphonyOutputAdapter($output), $composer, $mode);
+        $flow = HordeReconfigureFlow::fromComposer($composer, new SymphonyOutputAdapter($output));
         return $flow->run();
     }
 }

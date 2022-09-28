@@ -12,25 +12,42 @@ namespace Horde\Composer;
 use Composer\InstalledVersions;
 use Composer\PartialComposer;
 use Composer\Util\Filesystem;
+use Composer\Factory as ComposerFactory;
 use Horde\Composer\IOAdapter\FlowIoInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Horde\Composer\IOAdapter\SymphonyOutputAdapter;
 use RuntimeException;
+
 
 class HordeReconfigureFlow
 {
     private FlowIoInterface $io;
-    private PartialComposer $composer;
     /**
      * Modes: symlink, copy
      */
     private string $mode = 'symlink';
+    private DirectoryTree $tree;
 
-    public function __construct(FlowIoInterface $io, PartialComposer $composer, string $mode = 'symlink')
+    public function __construct(DirectoryTree $tree, FlowIoInterface $io, string $mode = 'symlink')
     {
         $this->io = $io;
-        $this->composer = $composer;
         $this->mode = $mode;
+        $this->tree = $tree;
     }
 
+    public static function fromComposer(PartialComposer $composer, ?FlowIoInterface $output = null): self
+    {
+        $mode = \strncasecmp(\PHP_OS, 'WIN', 3) === 0 ? 'copy' : 'symlink';
+        $tree = DirectoryTree::fromComposerJsonPath(ComposerFactory::getComposerFile());
+        $vendorDir = $composer->getConfig()->get('vendor-dir');
+        if (!is_string($vendorDir)) {
+            throw new RuntimeException('Cannot get vendor dir from config');
+        }
+        $outputInterface = $output ?? new SymphonyOutputAdapter(ComposerFactory::createOutput());
+        $tree->withVendorDir($vendorDir);
+        $flow = new HordeReconfigureFlow($tree, $outputInterface, $mode);
+        return $flow;
+    }
     /**
      * Run the reconfigure flow
      */
@@ -43,27 +60,21 @@ class HordeReconfigureFlow
         $hordeLibraries = InstalledVersions::getInstalledPackagesByType('horde-library');
         $hordeThemes = InstalledVersions::getInstalledPackagesByType('horde-theme');
 
-        // TODO: Supply vendor dir everywhere. While it's a bad idea, it is supposed to work
-        $vendorDir = $this->composer->getConfig()->get('vendor-dir');
-
-        if (!is_string($vendorDir)) {
-            throw new RuntimeException('Cannot get vendor dir from config');
-        }
         // We could simply ask InstalledVersions here, too
-        $rootPackageDir = dirname($vendorDir);
+        $rootPackageDir = $this->tree->getRootPackageDir();
+        $vendorDir = $this->tree->getVendorDir();
         $this->io->writeln('Applying /presets for absent files in /var/config');
         $presetHandler = new PresetHandler($rootPackageDir, $filesystem);
         $presetHandler->handle();
         $this->io->writeln('Looking for registry snippets from apps');
         $snippetHandler = new PackageDocRegistrySnippetHandler(
-            $rootPackageDir,
-            $filesystem,
-            $hordeApps
+            $this->tree,
+            $filesystem
         );
         $snippetHandler->handle();
 
         $this->io->writeln('Writing app configs to /var/config dir');
-        $registrySnippetFileWriter = new RegistrySnippetFileWriter(
+           $registrySnippetFileWriter = new RegistrySnippetFileWriter(
             $filesystem,
             $rootPackageDir,
             $hordeApps
