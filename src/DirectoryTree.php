@@ -51,13 +51,19 @@ class DirectoryTree
 
     public function withVendorDir(string $dir): self
     {
-        $this->vendorDir = $dir;
+        $this->vendorDir = '';
+        if ($dir === '' || $dir[0] !== '/') {
+            $this->vendorDir = getcwd();
+        }
+        if ($dir) {
+            $this->vendorDir . '/' . $dir;
+        }
         return $this;
     }
 
     public function withBinDir(string $dir): self
     {
-        $this->vendorDir = $dir;
+        $this->binDir = $dir;
         return $this;
     }
 
