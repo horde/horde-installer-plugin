@@ -137,17 +137,12 @@ class DirectoryTree
 
     public function getWebReadableRootDir(): string
     {
-        return $this->getRootPackageDir() . '/web';
+        return $this->webDir ?? $this->getRootPackageDir() . '/web';
     }
 
     public function getBinDir(): string
     {
         return $this->binDir ?? $this->getVendorDir() . '/bin';
-    }
-
-    public function getWebDir(): string
-    {
-        return $this->webDir ?? $this->getRootPackageDir() . '/web';
     }
 
     public function getPresetDir(): string

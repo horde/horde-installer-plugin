@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Horde\Composer\ConfigLinker;
 
 /**
- * @author     Ralf Lang <lang@b1-systems.de>
+ * @author     Ralf Lang <ralf.lang@ralf-lang.de>
  * @license    http://www.horde.org/licenses/lgpl LGPL
  * @category   Horde
  * @package    HordeInstallerPlugin

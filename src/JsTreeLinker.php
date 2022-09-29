@@ -40,14 +40,15 @@ class JsTreeLinker
      */
     public function __construct(
         Filesystem $filesystem,
-        string $baseDir,
+        DirectoryTree $tree,
         array $apps = [],
         array $libs = [],
         string $mode = 'symlink'
     ) {
+        $this->baseDir = $tree->getRootPackageDir();
         $this->filesystem = $filesystem;
-        $this->vendorDir = $baseDir . '/vendor';
-        $this->webDir= $baseDir . '/web';
+        $this->vendorDir = $tree->getVendorDir();
+        $this->webDir = $tree->getWebReadableRootDir();
         $this->jsDir = $this->webDir . '/js';
         $this->apps = $apps;
         $this->libs = $libs;

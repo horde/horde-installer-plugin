@@ -15,7 +15,7 @@ use React\Promise\PromiseInterface;
 /**
  * Installer implementation for horde apps and themes
  *
- * @author Ralf Lang <lang@b1-systems.de>
+ * @author Ralf Lang <ralf.lang@ralf-lang.de>
  */
 class HordeInstaller extends LibraryInstaller
 {
