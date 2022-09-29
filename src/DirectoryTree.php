@@ -27,17 +27,25 @@ class DirectoryTree
         $json = json_decode(file_get_contents($path));
         if (!is_object($json)) {
             throw new Exception('Could not parse json file');
-        
         }
-        $self = new self;
-        $self->withRootPackageDir(dirname($path));
+        $self = new self($path);
         // TODO: Extract data from composer.json, if present
         return $self;
     }
 
+    public function __construct(string $rootPackageDir)
+    {
+        $this->withRootPackageDir($rootPackageDir);
+    }
     public function withRootPackageDir(string $dir): self
     {
-        $this->rootPackageDir = $dir;
+        $this->rootPackageDir = '';
+        if ($dir === '' || $dir[0] !== '/') {
+            $this->rootPackageDir = getcwd();
+        }
+        if ($dir) {
+            $this->rootPackageDir . '/' . $dir;
+        }
         return $this;
     }
 
