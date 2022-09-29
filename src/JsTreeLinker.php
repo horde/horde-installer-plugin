@@ -34,7 +34,7 @@ class JsTreeLinker
      * Constructor
      *
      * @param Filesystem $filesystem
-     * @param string $baseDir
+     * @param DirectoryTree $tree
      * @param string[] $apps
      * @param string[] $libs
      */
@@ -45,7 +45,6 @@ class JsTreeLinker
         array $libs = [],
         string $mode = 'symlink'
     ) {
-        $this->baseDir = $tree->getRootPackageDir();
         $this->filesystem = $filesystem;
         $this->vendorDir = $tree->getVendorDir();
         $this->webDir = $tree->getWebReadableRootDir();
