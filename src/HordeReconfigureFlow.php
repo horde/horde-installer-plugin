@@ -11,6 +11,7 @@ namespace Horde\Composer;
 
 use Composer\InstalledVersions;
 use Composer\PartialComposer;
+use Composer\Composer;
 use Composer\Util\Filesystem;
 use Composer\Factory as ComposerFactory;
 use Horde\Composer\IOAdapter\FlowIoInterface;
@@ -35,7 +36,35 @@ class HordeReconfigureFlow
         $this->tree = $tree;
     }
 
-    public static function fromComposer(PartialComposer $composer, ?FlowIoInterface $output = null): self
+    /**
+     * Named Constructor.
+     *
+     * @param Composer $composer
+     * @param FlowIoInterface|null $output
+     * @return self
+     */
+    public static function fromComposer(Composer $composer, ?FlowIoInterface $output = null): self
+    {
+        return self::fromAnyComposer($composer, $output);
+    }
+
+    public static function fromPartialComposer(PartialComposer $composer, ?FlowIoInterface $output = null): self
+    {
+        return self::fromAnyComposer($composer, $output);
+    }
+
+    /**
+     * Actual implementation of fromComposer / fromPartialComposer named constructors
+     *
+     * Composer may provide a PartialCompoer or a Composer object.
+     * Use fromComposer and fromPartialComposer frontends
+     *
+     * @param Composer|PartialComposer $composer  A (partial) composer instance
+     * @param FlowIoInterface|null $output An IO interface
+     *
+     * @TODO Refactor this once we require PHP 8.0 or higher
+     */
+    private static function fromAnyComposer($composer, ?FlowIoInterface $output = null): self
     {
         $mode = \strncasecmp(\PHP_OS, 'WIN', 3) === 0 ? 'copy' : 'symlink';
         $tree = DirectoryTree::fromComposerJsonPath(ComposerFactory::getComposerFile());

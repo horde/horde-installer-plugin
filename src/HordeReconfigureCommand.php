@@ -36,7 +36,13 @@ class HordeReconfigureCommand extends BaseCommand
         if (!$composer) {
             die('Error: Command was run without a relation to composer itself');
         }
-        $flow = HordeReconfigureFlow::fromComposer($composer, new SymphonyOutputAdapter($output));
+        // This is needed to support PHP 7.4 (no union types) for both Composer 2.2 / 2.3
+        // Cannot use instanceof here as the class will not exist in 2.2.
+        if (get_class($composer) === 'Composer\PartialComposer') {
+            $flow = HordeReconfigureFlow::fromPartialComposer($composer, new SymphonyOutputAdapter($output));
+        } else {
+            $flow = HordeReconfigureFlow::fromComposer($composer, new SymphonyOutputAdapter($output));
+        }
         return $flow->run();
     }
 }

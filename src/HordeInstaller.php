@@ -25,7 +25,15 @@ class HordeInstaller extends LibraryInstaller
     public function reconfigure(): void
     {
         $mode = \strncasecmp(\PHP_OS, 'WIN', 3) === 0 ? 'copy' : 'symlink';
-        $flow = HordeReconfigureFlow::fromComposer($this->composer, new ComposerIoAdapter($this->io));
+        // This is needed to support PHP 7.4 (no union types) for both Composer 2.2 / 2.3
+        // Cannot use instanceof here as the class will not exist in 2.2.
+        if (get_class($this->composer) === 'Composer\PartialComposer') {
+            $flow = HordeReconfigureFlow::fromPartialComposer($this->composer, new ComposerIoAdapter($this->io));
+        } else {
+            // @phpstan-ignore-next-line
+            $flow = HordeReconfigureFlow::fromComposer($this->composer, new ComposerIoAdapter($this->io));
+        }
+
         $flow->run();
     }
 
