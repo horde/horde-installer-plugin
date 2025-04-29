@@ -28,6 +28,7 @@ class HordeReconfigureCommand extends BaseCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        // @phpstan-ignore-next-line This is for upgrading. An older version without reconfigure might be installed first.
         if (method_exists($this, 'requireComposer')) {
             $composer = $this->requireComposer();
         } else {

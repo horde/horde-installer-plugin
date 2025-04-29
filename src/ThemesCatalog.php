@@ -86,9 +86,6 @@ class ThemesCatalog
             if (isset($this->catalog[$themeName]) && !is_iterable($this->catalog[$themeName])) {
                 throw new Exception('Catalog content is not valid');
             }
-            if (!is_array($this->catalog)) {
-                throw new Exception('Catalog content is not valid: No array access');
-            }
             $this->catalog[$themeName][$app] = [
                 'provider' => $installDir,
                 'linkDir' => $entry->getPathname(),

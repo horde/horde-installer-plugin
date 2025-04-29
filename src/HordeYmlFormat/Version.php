@@ -12,7 +12,7 @@ class Version
     private string $release;
     private string $api;
 
-    public function __construct(string $release, string $api = null)
+    public function __construct(string $release, ?string $api = null)
     {
         $this->release = $release;
         $this->api = $api ?? $release;

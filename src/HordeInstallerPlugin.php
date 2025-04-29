@@ -42,6 +42,7 @@ class HordeInstallerPlugin implements PluginInterface, EventSubscriberInterface,
     public static function getSubscribedEvents(): array
     {
         $events = [];
+        // @phpstan-ignore-next-line This is for upgrading. An older version without reconfigure might be installed first.
         if (method_exists(HordeInstaller::class, 'reconfigure')) {
             $events['post-autoload-dump'] = ['reconfigureHandler', 1];
         }

@@ -13,12 +13,6 @@ use RecursiveIteratorIterator;
 
 class DirectoryTree
 {
-    private ?string $rootPackageDir = null;
-    private ?string $vendorDir = null;
-    private ?string $binDir = null;
-    private ?string $presetDir = null;
-    private ?string $webDir = null;
-
     public static function fromComposerJsonPath(string $path): self
     {
         if (!is_file($path)) {
@@ -33,8 +27,13 @@ class DirectoryTree
         return $self;
     }
 
-    public function __construct(string $rootPackageDir)
-    {
+    public function __construct(
+        private string $rootPackageDir,
+        private ?string $vendorDir = null,
+        private ?string $binDir = null,
+        private ?string $presetDir = null,
+        private ?string $webDir = null
+    ) {
         $this->withRootPackageDir($rootPackageDir);
     }
     public function withRootPackageDir(string $dir): self
@@ -42,9 +41,6 @@ class DirectoryTree
         $this->rootPackageDir = '';
         if ($dir === '' || $dir[0] !== '/') {
             $this->rootPackageDir = getcwd();
-        }
-        if ($dir) {
-            $this->rootPackageDir . '/' . $dir;
         }
         return $this;
     }
@@ -54,9 +50,6 @@ class DirectoryTree
         $this->vendorDir = '';
         if ($dir === '' || $dir[0] !== '/') {
             $this->vendorDir = getcwd();
-        }
-        if ($dir) {
-            $this->vendorDir . '/' . $dir;
         }
         return $this;
     }
