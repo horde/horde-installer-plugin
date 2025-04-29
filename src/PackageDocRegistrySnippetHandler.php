@@ -38,7 +38,7 @@ class PackageDocRegistrySnippetHandler
 
     /**
      * Scan all packages for a registry snippet
-     * 
+     *
      * Copy snippets to the horde base app's registry snippet dir
      *
      * @return void
@@ -50,7 +50,7 @@ class PackageDocRegistrySnippetHandler
             $vendorDir = $this->tree->getVendorSpecificDir($vendor);
             foreach ($this->tree->getPackagesByVendor($vendor) as $package) {
                 // TODO: Check for a .yml file to ensure it is a valid package
-                $sourceDir = $this->tree->getDependencyDir($vendor, $package) .  '/doc/registry.d';
+                $sourceDir = $this->tree->getDependencyDir($vendor, $package) . '/doc/registry.d';
                 if (!is_dir($sourceDir) || !is_readable($sourceDir)) {
                     continue;
                 }

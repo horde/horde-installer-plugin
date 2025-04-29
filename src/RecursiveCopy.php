@@ -12,7 +12,7 @@ use SplFileInfo;
 
 /**
  * Recursive copy handler
- * 
+ *
  * This wants to be factored out.
  */
 class RecursiveCopy
@@ -25,12 +25,12 @@ class RecursiveCopy
      */
     private array $filter = [
         '.',
-        '..'
+        '..',
     ];
- 
+
     /**
      * Create a recursive copy operation pending execution
-     * 
+     *
      * @param string $sourceDir Where to copy from
      * @param string $targetDir Where to copy to
      * @param array<string> $filter Files or dirs to ignore, including subdir content.
@@ -49,14 +49,14 @@ class RecursiveCopy
     {
         if (!file_exists($this->targetDir)) {
             // TODO: Exception if fails
-            mkdir($this->targetDir, 0777, true);
+            mkdir($this->targetDir, 0o777, true);
         }
-        $this->copyLevel($this->sourceDir, $this->targetDir, $this->filter);        
+        $this->copyLevel($this->sourceDir, $this->targetDir, $this->filter);
     }
 
     /**
      * Internal recursion function for copy()
-     * 
+     *
      * @param string $sourceDir Where to copy from
      * @param string $targetDir Where to copy to
      * @param array<string> $filter Files or dirs to ignore, including subdir content.

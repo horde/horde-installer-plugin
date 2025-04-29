@@ -11,7 +11,7 @@ use json_decode;
 
 /**
  * Encapsulate handling the themes catalog
- * 
+ *
  * @internal No Backward Compatibility promise as of now, refactoring overdue
  */
 class ThemesCatalog

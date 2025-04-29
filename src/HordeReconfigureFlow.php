@@ -19,7 +19,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Horde\Composer\IOAdapter\SymphonyOutputAdapter;
 use RuntimeException;
 
-
 class HordeReconfigureFlow
 {
     private FlowIoInterface $io;
@@ -103,7 +102,7 @@ class HordeReconfigureFlow
         $snippetHandler->handle();
 
         $this->io->writeln('Writing app configs to /var/config dir');
-           $registrySnippetFileWriter = new RegistrySnippetFileWriter(
+        $registrySnippetFileWriter = new RegistrySnippetFileWriter(
             $filesystem,
             $rootPackageDir,
             $hordeApps

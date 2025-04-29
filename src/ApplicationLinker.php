@@ -59,7 +59,7 @@ class ApplicationLinker
             }
             $appVendorDir = $vendorDir . '/' . $app;
             [$vendor, $appName] = explode('/', $app);
-            $appWebDir = $webDir . '/' .  $appName;
+            $appWebDir = $webDir . '/' . $appName;
             // abort if the app isn't actually there
             if (!is_dir($appVendorDir) || !is_readable($appVendorDir)) {
                 // TODO: Consume IO object and warn
@@ -75,7 +75,7 @@ class ApplicationLinker
                     '.gitignore', 'README.rst',
                 ],
                 'dirs' => [
-                    'doc', 
+                    'doc',
                     'test',
                     'bin',
                     'script',
@@ -83,7 +83,7 @@ class ApplicationLinker
                     'static', // static should be ensured to exist in webdir.
                     '.git',
                     '.github',
-                ]
+                ],
             ];
 
             if ($this->mode === 'symlink') {

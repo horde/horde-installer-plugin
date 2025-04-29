@@ -87,7 +87,7 @@ class JsTreeLinker
         // Library javascript dirs are exposed under js/horde/
         foreach ($this->libs as $lib) {
             [$vendor, $name] =  explode('/', $lib, 2);
-            $libraryPath = $this->vendorDir . '/'. $vendor . '/' . $name;
+            $libraryPath = $this->vendorDir . '/' . $vendor . '/' . $name;
             $jsSourcePath = $libraryPath . '/js';
             if (!$this->filesystem->isReadable($jsSourcePath)) {
                 continue;

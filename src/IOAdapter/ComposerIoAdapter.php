@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Common interface implemented by shims for
  * Composer\IO\IOInterface and Symfony\Component\Console\Output\OutputInterface
