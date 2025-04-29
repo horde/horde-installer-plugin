@@ -29,7 +29,7 @@ class DependencyList
      */
     public function getPearDependencies(): iterable
     {
-        return array_filter((array)$this->dependencies, fn ($dep) => $dep instanceof PearDependency);
+        return array_filter((array) $this->dependencies, fn($dep) => $dep instanceof PearDependency);
     }
 
     /**
@@ -37,7 +37,7 @@ class DependencyList
      */
     public function getComposerDependencies(): iterable
     {
-        return array_filter((array)$this->dependencies, fn ($dep) => $dep instanceof ComposerDependency);
+        return array_filter((array) $this->dependencies, fn($dep) => $dep instanceof ComposerDependency);
     }
 
     /**
@@ -45,6 +45,6 @@ class DependencyList
      */
     public function getPlatformDependencies(): iterable
     {
-        return array_filter((array)$this->dependencies, fn ($dep) => $dep instanceof PlatformDependency);
+        return array_filter((array) $this->dependencies, fn($dep) => $dep instanceof PlatformDependency);
     }
 }

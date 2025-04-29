@@ -63,7 +63,7 @@ class ConfigLinker
                 $relativeName = $contentInfo->getSubPathname();
                 $subPath = $targetDir . '/' . $contentInfo->getSubPath();
                 if (!is_dir($subPath)) {
-                    mkdir($subPath, 0770, true);
+                    mkdir($subPath, 0o770, true);
                 }
                 $linkName = $targetDir . '/' . $relativeName;
                 $sourceName = $appConfigDir . '/' . $relativeName;

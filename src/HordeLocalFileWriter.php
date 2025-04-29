@@ -56,7 +56,7 @@ class HordeLocalFileWriter
         // special case horde/horde needs to require the composer autoloader
         if ($app == 'horde/horde') {
             $hordeLocalFileContent .= $this->_legacyWorkaround($this->filesystem->normalizePath($this->vendorDir));
-            $hordeLocalFileContent .= "require_once('" . $this->vendorDir ."/autoload.php');";
+            $hordeLocalFileContent .= "require_once('" . $this->vendorDir . "/autoload.php');";
         }
         $this->filesystem->filePutContentsIfModified($path, $hordeLocalFileContent);
     }

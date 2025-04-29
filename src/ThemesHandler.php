@@ -7,6 +7,7 @@ namespace Horde\Composer;
 use Composer\Util\Filesystem;
 use DirectoryIterator;
 use Exception;
+
 /**
  * Themes Handler class
  *
@@ -38,12 +39,11 @@ class ThemesHandler
     private string $mode = 'symlink';
 
     public function __construct(
-        Filesystem $filesystem, 
+        Filesystem $filesystem,
         string $rootDir,
         string $vendorDir,
         string $mode = 'symlink'
-    )
-    {
+    ) {
         $this->filesystem = $filesystem;
         $this->rootDir = $rootDir;
         $this->vendorDir = $vendorDir;
@@ -64,16 +64,15 @@ class ThemesHandler
 
     /**
      * Setup themes shipped with an app
-     * 
+     *
      * These may be named "default" or other
-     * 
+     *
      */
     public function setupDefaultTheme(): void
     {
         $vendorDir = new DirectoryIterator($this->vendorDir);
         // Consider all vendors, not just "horde" - on purpose
-        foreach ($vendorDir as $vendor)
-        {
+        foreach ($vendorDir as $vendor) {
             $vendorName = $vendor->getFileName();
             if (!$vendor->isDir() || $vendor->isDot() || in_array($vendorName, ['bin', 'composer'])) {
                 continue;
@@ -100,7 +99,7 @@ class ThemesHandler
                         continue;
                     }
                     $themeName = $theme->getFileName();
-                    $targetDir =  $this->themesDir . '/' . $packageName  . '/' . $themeName;
+                    $targetDir =  $this->themesDir . '/' . $packageName . '/' . $themeName;
                     $this->filesystem->ensureDirectoryExists(dirname($targetDir));
                     if ($this->mode === 'symlink') {
                         $this->filesystem->relativeSymlink($themeSourceDir, $targetDir);

@@ -18,7 +18,7 @@ class DirectoryTree
     private ?string $binDir = null;
     private ?string $presetDir = null;
     private ?string $webDir = null;
- 
+
     public static function fromComposerJsonPath(string $path): self
     {
         if (!is_file($path)) {
