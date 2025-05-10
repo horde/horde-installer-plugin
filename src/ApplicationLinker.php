@@ -72,7 +72,8 @@ class ApplicationLinker
                 'files' => [
                     'LICENSE', 'composer.json', 'composer.lock', '.gitattributes',
                     '.horde.yml', '.travis.yml', 'package.xml', 'phpunit.xml.dist',
-                    '.gitignore', 'README.rst',
+                    '.gitignore', 'README.rst', 'README.md', 'README', 'CHANGELOG.md',
+                    '.php-cs-fixer.dist.php', '.php-cs-fixer.cache', 'phpunit.xml',
                 ],
                 'dirs' => [
                     'doc',
