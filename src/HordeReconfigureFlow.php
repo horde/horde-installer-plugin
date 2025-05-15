@@ -18,6 +18,7 @@ use Horde\Composer\IOAdapter\FlowIoInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Horde\Composer\IOAdapter\SymphonyOutputAdapter;
 use RuntimeException;
+use strncasecmp;
 
 class HordeReconfigureFlow
 {
@@ -42,14 +43,14 @@ class HordeReconfigureFlow
      * @param FlowIoInterface|null $output
      * @return self
      */
-    public static function fromComposer(Composer $composer, ?FlowIoInterface $output = null): self
+    public static function fromComposer(Composer $composer, ?FlowIoInterface $output = null, string $mode = 'symlink'): self
     {
-        return self::fromAnyComposer($composer, $output);
+        return self::fromAnyComposer($composer, $output, $mode);
     }
 
-    public static function fromPartialComposer(PartialComposer $composer, ?FlowIoInterface $output = null): self
+    public static function fromPartialComposer(PartialComposer $composer, ?FlowIoInterface $output = null, string $mode = 'symlink'): self
     {
-        return self::fromAnyComposer($composer, $output);
+        return self::fromAnyComposer($composer, $output, $mode);
     }
 
     /**
@@ -63,9 +64,12 @@ class HordeReconfigureFlow
      *
      * @TODO Refactor this once we require PHP 8.0 or higher
      */
-    private static function fromAnyComposer($composer, ?FlowIoInterface $output = null): self
+    private static function fromAnyComposer($composer, ?FlowIoInterface $output = null, string $mode = 'symlink'): self
     {
-        $mode = \strncasecmp(\PHP_OS, 'WIN', 3) === 0 ? 'copy' : 'symlink';
+        // Symlink mode does not work on Windows
+        if ($mode == 'symlink') {
+            $mode = strncasecmp(\PHP_OS, 'WIN', 3) === 0 ? 'copy' : 'symlink';
+        }
         $tree = DirectoryTree::fromComposerJsonPath(ComposerFactory::getComposerFile());
         $vendorDir = $composer->getConfig()->get('vendor-dir');
         if (!is_string($vendorDir)) {
