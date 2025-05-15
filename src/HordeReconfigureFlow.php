@@ -104,18 +104,20 @@ class HordeReconfigureFlow
             $filesystem
         );
         $snippetHandler->handle();
-
+        $this->io->writeln('Configuration mode: ' . $this->mode);
         $this->io->writeln('Writing app configs to /var/config dir');
         $registrySnippetFileWriter = new RegistrySnippetFileWriter(
             $filesystem,
             $rootPackageDir,
-            $hordeApps
+            $hordeApps,
+            $this->mode
         );
         $registrySnippetFileWriter->run();
         $hordeLocalWriter = new HordeLocalFileWriter(
             $filesystem,
             $rootPackageDir,
             $hordeApps,
+            $this->mode
         );
         $hordeLocalWriter->run();
         $this->io->writeln('Linking app configs to /web Dir');
