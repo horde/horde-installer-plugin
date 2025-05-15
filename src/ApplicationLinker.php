@@ -52,7 +52,7 @@ class ApplicationLinker
         $this->filesystem->ensureDirectoryExists($webDir);
         // Ensure we have a static dir for ephemeral, generated files ...
         $this->filesystem->ensureDirectoryExists($webDir . '/static');
-
+        // TODO: Move implementations to separate classes
         foreach ($this->appPackages as $app) {
             if ($app === 'horde/components') {
                 continue;
@@ -79,6 +79,8 @@ class ApplicationLinker
                     'doc',
                     'test',
                     'bin',
+                    'lib',
+                    'src',
                     'script',
                     'scripts',
                     'static', // static should be ensured to exist in webdir.
@@ -117,10 +119,93 @@ class ApplicationLinker
                         $appWebDir . '/' . $name
                     );
                 }
+            } elseif ($this->mode == 'proxy') {
+                // This list is different from the one for the linker
+                $filterList = [
+
+                    'files' => [
+                        '.gitignore',
+                        '.gitattributes',
+                        'README.rst',
+                        'README',
+                        'LICENSE',
+                        'phpunit.xml',
+                        'phpunit.xml.dist',
+                        'composer.json',
+                    ],
+                    'dirs' => [
+                        'bin',
+                        'lib',
+                        'src',
+                        '.git',
+                        '.github',
+                        'doc',
+                        'js',
+                        'script',
+                        'scripts',
+                        'static',
+                        'config',
+                        'locale',
+                        'themes',
+                        'templates',
+                        'vendor',
+                    ],
+                ];
+                $this->filesystem->emptyDirectory($appWebDir, true);
+                // We are already per-app
+                // appWebDir and appVendorDir are already set
+                $r = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($appVendorDir));
+                foreach ($r as $f => $entry) {
+                    // Ignore directories as such - they are created if they have relevant files
+                    if ($entry->isDir()) {
+                        continue;
+                    }
+                    $name = $entry->getFilename();
+                    $relativePathName = $r->getSubPathname();
+                    $relativePath = $r->getSubPath();
+                    $split = explode(DIRECTORY_SEPARATOR, $relativePathName, 3);
+                    // Skip subpaths of the filtered dirs
+                    if (in_array(
+                        $split[0],
+                        $filterList['dirs']
+                    )) {
+                        continue;
+                    }
+                    if (in_array(
+                        $name,
+                        $filterList['files']
+                    )) {
+                        continue;
+                    }
+                    $this->filesystem->ensureDirectoryExists($appWebDir . DIRECTORY_SEPARATOR . $relativePath);
+                    $pathProxyToAutoloader = $this->filesystem->findShortestPath(
+                        $appWebDir . DIRECTORY_SEPARATOR . $relativePathName,
+                        $vendorDir . DIRECTORY_SEPARATOR . 'autoload.php',
+                        preferRelative: true
+                    );
+                    $pathProxyToFile = $this->filesystem->findShortestPath(
+                        $appWebDir . DIRECTORY_SEPARATOR . $relativePathName,
+                        $appVendorDir . DIRECTORY_SEPARATOR . $relativePathName,
+                        preferRelative: true
+                    );
+
+                    $originalContent = file_get_contents($appVendorDir . DIRECTORY_SEPARATOR . $relativePathName);
+                    if (str_contains((string) $originalContent, '<?php')) {
+                        // PHP files get a proxy
+                        $content = "<?php\nrequire_once(__DIR__ . '/$pathProxyToAutoloader');\nrequire_once(__DIR__ . '/$pathProxyToFile');";
+                    } else {
+                        // Non-PHP files get copied as is
+                        $content = $originalContent;
+                    }
+                    $this->filesystem->filePutContentsIfModified(
+                        $appWebDir . DIRECTORY_SEPARATOR . $relativePathName,
+                        $content
+                    );
+                } // EndForEach File
             } else {
                 $copy = new RecursiveCopy($appVendorDir, $appWebDir, array_merge($filterList['files'], $filterList['dirs']));
                 $copy->copy();
             }
-        }
+        } // EndForEach App
     }
 }
