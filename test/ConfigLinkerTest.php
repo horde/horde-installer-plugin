@@ -11,6 +11,7 @@ use Horde\Composer\ConfigLinker;
  * @category   Horde
  * @package    HordeInstallerPlugin
  * @subpackage UnitTests
+ * @coversNothing
  */
 class ConfigLinkerTest extends TestCase
 {
@@ -18,7 +19,7 @@ class ConfigLinkerTest extends TestCase
     private string $fixture;
     public function setUp(): void
     {
-        $this->fixture = __DIR__. '/fixture/ConfigLinker';
+        $this->fixture = __DIR__ . '/fixture/ConfigLinker';
         $this->linker = new ConfigLinker($this->fixture);
     }
 

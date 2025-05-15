@@ -11,6 +11,7 @@ use Horde\Composer\RecursiveCopy;
  * @category   Horde
  * @package    HordeInstallerPlugin
  * @subpackage UnitTests
+ * @coversNothing
  */
 class RecursiveCopyTest extends TestCase
 {
@@ -18,7 +19,7 @@ class RecursiveCopyTest extends TestCase
     private string $fixture;
     public function setUp(): void
     {
-        $this->fixture = __DIR__. '/fixture/RecursiveCopy';
+        $this->fixture = __DIR__ . '/fixture/RecursiveCopy';
         $this->copy = new RecursiveCopy($this->fixture . '/source', $this->fixture . '/dest');
     }
 
@@ -34,7 +35,5 @@ class RecursiveCopyTest extends TestCase
         $this->assertFileExists($this->fixture . '/dest/sub1/sub2/egal.txt');
     }
 
-    public function tearDown(): void
-    {
-    }
+    public function tearDown(): void {}
 }

@@ -26,15 +26,14 @@ class RegistrySnippetFileWriter
      * @param string[] $apps
      */
     public function __construct(
-        private Filesystem $filesystem, 
+        private Filesystem $filesystem,
         /**
          * The config dir for the registry
          */
-        private string $baseDir, 
-        array $apps, 
+        private string $baseDir,
+        array $apps,
         private string $mode = 'symlink'
-        )
-    {
+    ) {
         /**
          * The config dir for the registry
          */
@@ -99,7 +98,7 @@ $app_webroot = \'%s\';
             } else {
                 // A registry snippet should ensure the install dir is known
                 $registryAppFilename = $this->configRegistryDir . '/02-location-' . $appName . '.php';
-                $appInVendorDir= $this->baseDir . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . $appVendor . DIRECTORY_SEPARATOR . $appName . DIRECTORY_SEPARATOR;
+                $appInVendorDir = $this->baseDir . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . $appVendor . DIRECTORY_SEPARATOR . $appName . DIRECTORY_SEPARATOR;
                 $registryAppSnippet .=
                 '$this->applications[\'' . $appName . '\'][\'fileroot\'] = \'' . $appInVendorDir . '\';' . PHP_EOL .
                 '$this->applications[\'' . $appName . '\'][\'templates\'] = \'' . $appInVendorDir . 'templates' . DIRECTORY_SEPARATOR . '\';' . PHP_EOL .

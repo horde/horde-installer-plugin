@@ -33,7 +33,7 @@ class HordeLocalFileWriter
         $this->filesystem = $filesystem;
         $this->configDir = $baseDir . '/var/config';
         $this->vendorDir = $baseDir . '/vendor';
-        $this->vendorHordeDir = $this->vendorDir . DIRECTORY_SEPARATOR .'horde' . DIRECTORY_SEPARATOR . 'horde';
+        $this->vendorHordeDir = $this->vendorDir . DIRECTORY_SEPARATOR . 'horde' . DIRECTORY_SEPARATOR . 'horde';
         $this->webDir = $baseDir . '/web';
         $this->apps = $apps;
     }
