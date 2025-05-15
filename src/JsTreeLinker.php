@@ -76,7 +76,7 @@ class JsTreeLinker
         // app javascript dirs are exposed under js/$app
         foreach ($this->apps as $app) {
             [$vendor, $name] =  explode('/', $app, 2);
-            $appPath = $this->webDir . '/' . $name;
+            $appPath = $this->vendorDir . '/' . $vendor . '/' . $name;
             $jsSourcePath = $appPath . '/js';
             if (!$this->filesystem->isReadable($jsSourcePath)) {
                 continue;
@@ -115,7 +115,7 @@ class JsTreeLinker
             }
             $sourceFile = $sourceDir . '/' . $sourceItem;
             $targetFile = $targetDir . '/' . $sourceItem;
-            if ($this->mode === 'symlink') {
+            if (in_array($this->mode, ['symlink', 'proxy'])) {
                 $this->filesystem->relativeSymlink($sourceFile, $targetFile);
             } else {
                 if (is_file($sourceFile)) {

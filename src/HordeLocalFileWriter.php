@@ -19,6 +19,7 @@ class HordeLocalFileWriter
     private string $webDir;
 
     private Filesystem $filesystem;
+    private string $vendorHordeDir;
 
     /**
      * Undocumented function
@@ -27,11 +28,12 @@ class HordeLocalFileWriter
      * @param string $baseDir
      * @param string[] $apps
      */
-    public function __construct(Filesystem $filesystem, string $baseDir, array $apps)
+    public function __construct(Filesystem $filesystem, string $baseDir, array $apps, private string $mode = 'symlink')
     {
         $this->filesystem = $filesystem;
         $this->configDir = $baseDir . '/var/config';
         $this->vendorDir = $baseDir . '/vendor';
+        $this->vendorHordeDir = $this->vendorDir . DIRECTORY_SEPARATOR .'horde' . DIRECTORY_SEPARATOR . 'horde';
         $this->webDir = $baseDir . '/web';
         $this->apps = $apps;
     }
@@ -49,9 +51,14 @@ class HordeLocalFileWriter
         [$vendor, $name] = explode('/', $app, 2);
         $this->filesystem->ensureDirectoryExists($this->configDir . "/$name");
         $path = $this->configDir . "/$name/horde.local.php";
+        $hordeBaseDir = $hordeWebDir;
+        if ($this->mode === 'proxy') {
+            $hordeBaseDir = $this->vendorHordeDir;
+        }
         $hordeLocalFileContent = sprintf(
-            "<?php if (!defined('HORDE_BASE')) define('HORDE_BASE', '%s');\n",
-            $hordeWebDir
+            "<?php if (!defined('HORDE_BASE')) define('HORDE_BASE', '%s');\nif (!defined('HORDE_CONFIG_BASE')) define('HORDE_CONFIG_BASE', '%s');\n",
+            $hordeBaseDir,
+            $this->configDir
         );
         // special case horde/horde needs to require the composer autoloader
         if ($app == 'horde/horde') {
