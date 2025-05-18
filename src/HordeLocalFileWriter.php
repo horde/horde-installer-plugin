@@ -65,6 +65,10 @@ class HordeLocalFileWriter
             $hordeLocalFileContent .= $this->_legacyWorkaround($this->filesystem->normalizePath($this->vendorDir));
             $hordeLocalFileContent .= "require_once('" . $this->vendorDir . "/autoload.php');";
         }
+        $autoloadExtraFilePath = $this->baseDir . '/var/config/autoload-extra.php';
+        if (file_exists($autoloadExtraFilePath)) {
+            $hordeLocalFileContent .= "\nrequire_once('$autoloadExtraFilePath')\n";
+        }
         $this->filesystem->filePutContentsIfModified($path, $hordeLocalFileContent);
     }
     /**
