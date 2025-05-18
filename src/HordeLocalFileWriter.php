@@ -28,7 +28,7 @@ class HordeLocalFileWriter
      * @param string $baseDir
      * @param string[] $apps
      */
-    public function __construct(Filesystem $filesystem, string $baseDir, array $apps, private string $mode = 'symlink')
+    public function __construct(Filesystem $filesystem, private string $baseDir, array $apps, private string $mode = 'symlink')
     {
         $this->filesystem = $filesystem;
         $this->configDir = $baseDir . '/var/config';
