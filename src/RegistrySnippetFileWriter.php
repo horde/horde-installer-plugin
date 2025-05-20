@@ -103,7 +103,7 @@ $app_webroot = \'%s\';
                 '$this->applications[\'' . $appName . '\'][\'fileroot\'] = \'' . $appInVendorDir . '\';' . PHP_EOL .
                 '$this->applications[\'' . $appName . '\'][\'templates\'] = \'' . $appInVendorDir . 'templates' . DIRECTORY_SEPARATOR . '\';' . PHP_EOL .
                 '$this->applications[\'' . $appName . '\'][\'webroot\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../' . $appName . "';" . PHP_EOL .
-                '$this->applications[\'' . $appName . '\'][\'themesfs\'] = \'' . $this->webDir . DIRECTORY_SEPARATOR . $app . DIRECTORY_SEPARATOR . '\';' . PHP_EOL .
+                '$this->applications[\'' . $appName . '\'][\'themesfs\'] = \'' . $this->webDir . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR . $appName . DIRECTORY_SEPARATOR . '\';' . PHP_EOL .
                 '$this->applications[\'' . $appName . '\'][\'themesuri\'] = $this->applications[\'horde\'][\'webroot\'] . \'/../themes/' . $appName . '/\';';
             }
             $this->filesystem->filePutContentsIfModified($registryAppFilename, $registryAppSnippet);
