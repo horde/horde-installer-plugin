@@ -79,8 +79,6 @@ class ApplicationLinker
                     'doc',
                     'test',
                     'bin',
-                    'lib',
-                    'src',
                     'script',
                     'scripts',
                     'static', // static should be ensured to exist in webdir.
