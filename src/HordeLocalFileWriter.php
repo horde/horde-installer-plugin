@@ -56,7 +56,7 @@ class HordeLocalFileWriter
             $hordeBaseDir = $this->vendorHordeDir;
         }
         $hordeLocalFileContent = sprintf(
-            "<?php if (!defined('HORDE_BASE')) define('HORDE_BASE', '%s');\nif (!defined('HORDE_CONFIG_BASE')) define('HORDE_CONFIG_BASE', '%s');\n",
+            "<?php\nif (!defined('HORDE_BASE')) define('HORDE_BASE', '%s');\nif (!defined('HORDE_CONFIG_BASE')) define('HORDE_CONFIG_BASE', '%s');\n",
             $hordeBaseDir,
             $this->configDir
         );
@@ -65,6 +65,14 @@ class HordeLocalFileWriter
             $hordeLocalFileContent .= $this->_legacyWorkaround($this->filesystem->normalizePath($this->vendorDir));
             $hordeLocalFileContent .= "require_once('" . $this->vendorDir . "/autoload.php');";
         }
+        $appNameUpper = strtoupper($name);
+        $hordeLocalFileContent .= sprintf(
+            "\nif (!defined('%s_TEMPLATES')) define('%s_TEMPLATES', '%s');\n",
+            $appNameUpper,
+            $appNameUpper,
+            $this->vendorDir . DIRECTORY_SEPARATOR . $vendor . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR . 'templates',
+        );
+
         $autoloadExtraFilePath = $this->baseDir . '/var/config/autoload-extra.php';
         if (file_exists($autoloadExtraFilePath)) {
             $hordeLocalFileContent .= "\nrequire_once('$autoloadExtraFilePath')\n";
