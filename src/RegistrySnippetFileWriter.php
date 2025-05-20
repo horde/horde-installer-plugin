@@ -84,10 +84,12 @@ $app_webroot = \'%s\';
             ' * - var/config/horde/registry-sub.domain.org.php' . PHP_EOL .
             ' */' . PHP_EOL;
 
+            $appInVendorDir = $this->baseDir . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . $appVendor . DIRECTORY_SEPARATOR . $appName . DIRECTORY_SEPARATOR;
             if ($app == 'horde/horde') {
                 $registryAppFilename = $this->configRegistryDir . '/01-location-' . $appName . '.php';
                 $registryAppSnippet .=
-                '$this->applications[\'horde\'][\'fileroot\'] = $app_fileroot;' . PHP_EOL .
+                '$this->applications[\'' . $appName . '\'][\'fileroot\'] = \'' . $appInVendorDir . '\';' . PHP_EOL .
+                '$this->applications[\'' . $appName . '\'][\'templates\'] = \'' . $appInVendorDir . 'templates' . DIRECTORY_SEPARATOR . '\';' . PHP_EOL .
                 '$this->applications[\'horde\'][\'webroot\'] = $app_webroot;' . PHP_EOL .
                 '$this->applications[\'horde\'][\'jsfs\'] = $deployment_fileroot . \'/js/horde/\';' . PHP_EOL .
                 '$this->applications[\'horde\'][\'jsuri\'] = $deployment_webroot . \'js/horde/\';' . PHP_EOL .
@@ -98,7 +100,6 @@ $app_webroot = \'%s\';
             } else {
                 // A registry snippet should ensure the install dir is known
                 $registryAppFilename = $this->configRegistryDir . '/02-location-' . $appName . '.php';
-                $appInVendorDir = $this->baseDir . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . $appVendor . DIRECTORY_SEPARATOR . $appName . DIRECTORY_SEPARATOR;
                 $registryAppSnippet .=
                 '$this->applications[\'' . $appName . '\'][\'fileroot\'] = \'' . $appInVendorDir . '\';' . PHP_EOL .
                 '$this->applications[\'' . $appName . '\'][\'templates\'] = \'' . $appInVendorDir . 'templates' . DIRECTORY_SEPARATOR . '\';' . PHP_EOL .
