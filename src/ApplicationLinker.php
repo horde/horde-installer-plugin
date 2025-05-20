@@ -9,6 +9,7 @@ use Composer\Util\Filesystem;
 use DirectoryIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use ReflectionMethod;
 
 class ApplicationLinker
 {
@@ -176,16 +177,30 @@ class ApplicationLinker
                         continue;
                     }
                     $this->filesystem->ensureDirectoryExists($appWebDir . DIRECTORY_SEPARATOR . $relativePath);
-                    $pathProxyToAutoloader = $this->filesystem->findShortestPath(
-                        $appWebDir . DIRECTORY_SEPARATOR . $relativePathName,
-                        $vendorDir . DIRECTORY_SEPARATOR . 'autoload.php',
-                        preferRelative: true
-                    );
-                    $pathProxyToFile = $this->filesystem->findShortestPath(
-                        $appWebDir . DIRECTORY_SEPARATOR . $relativePathName,
-                        $appVendorDir . DIRECTORY_SEPARATOR . $relativePathName,
-                        preferRelative: true
-                    );
+                    $reflection = new ReflectionMethod($this->filesystem, 'findShortestPath');
+                    if ($reflection->getNumberOfParameters() >= 4) {
+                        $pathProxyToAutoloader = $this->filesystem->findShortestPath(
+                            $appWebDir . DIRECTORY_SEPARATOR . $relativePathName,
+                            $vendorDir . DIRECTORY_SEPARATOR . 'autoload.php',
+                            preferRelative: true
+                        );
+                        $pathProxyToFile = $this->filesystem->findShortestPath(
+                            $appWebDir . DIRECTORY_SEPARATOR . $relativePathName,
+                            $appVendorDir . DIRECTORY_SEPARATOR . $relativePathName,
+                            preferRelative: true
+                        );
+                    } else {
+                        // Older composer versions don't support preferRelative
+                        $pathProxyToAutoloader = $this->filesystem->findShortestPath(
+                            $appWebDir . DIRECTORY_SEPARATOR . $relativePathName,
+                            $vendorDir . DIRECTORY_SEPARATOR . 'autoload.php',
+                        );
+                        $pathProxyToFile = $this->filesystem->findShortestPath(
+                            $appWebDir . DIRECTORY_SEPARATOR . $relativePathName,
+                            $appVendorDir . DIRECTORY_SEPARATOR . $relativePathName,
+                        );                        
+                    }
+
 
                     $originalContent = file_get_contents($appVendorDir . DIRECTORY_SEPARATOR . $relativePathName);
                     if (str_contains((string) $originalContent, '<?php')) {
