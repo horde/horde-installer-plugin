@@ -101,15 +101,15 @@ class HordeReconfigureFlow
             foreach ($hordeApps as $app) {
                 list($vendorName, $appName) = explode('/', $app);
                 // horde.local.php files
-                $filesystem->remove($this->tree->getConfigDir() . '/' . $appName . '/horde.local.php');
+                $filesystem->remove($this->tree->getVarConfigDir() . '/' . $appName . '/horde.local.php');
                 $filesystem->remove($vendorDir . '/'. $vendorName . '/'. $appName .  '/config/horde.local.php');
                 if ($app == 'horde') {
                     // remove horde registry file
-                    $filesystem->remove($this->tree->getConfigDir() . '/horde/registry.d/00-horde.php');
-                    $filesystem->remove($this->tree->getConfigDir() . '/horde/registry.d/01-location-' . $appName . '.php');
+                    $filesystem->remove($this->tree->getVarConfigDir() . '/horde/registry.d/00-horde.php');
+                    $filesystem->remove($this->tree->getVarConfigDir() . '/horde/registry.d/01-location-' . $appName . '.php');
                 } else {
                     // remove app registry file
-                    $filesystem->remove($this->tree->getConfigDir() . '/horde/registry.d/02-location-' . $appName  . '.php');
+                    $filesystem->remove($this->tree->getVarConfigDir() . '/horde/registry.d/02-location-' . $appName  . '.php');
                 }
                 // remove webdir items
                 $filesystem->remove($this->tree->getWebDir() . '/' . $appName);
