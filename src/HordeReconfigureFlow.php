@@ -28,7 +28,7 @@ class HordeReconfigureFlow
      */
     private DirectoryTree $tree;
 
-    public function __construct(DirectoryTree $tree, FlowIoInterface $io, public readonly ReconfigureOptions $options)
+    public function __construct(DirectoryTree $tree, FlowIoInterface $io, public readonly ReconfigureOptions $options = new ReconfigureOptions())
     {
         $this->io = $io;
         $this->tree = $tree;
@@ -41,12 +41,12 @@ class HordeReconfigureFlow
      * @param FlowIoInterface|null $output
      * @return self
      */
-    public static function fromComposer(Composer $composer, ?FlowIoInterface $output = null, ReconfigureOptions $options): self
+    public static function fromComposer(Composer $composer, ?FlowIoInterface $output = null, ReconfigureOptions $options = new ReconfigureOptions()): self
     {
         return self::fromAnyComposer($composer, $output, $options);
     }
 
-    public static function fromPartialComposer(PartialComposer $composer, ?FlowIoInterface $output = null, ReconfigureOptions $options): self
+    public static function fromPartialComposer(PartialComposer $composer, ?FlowIoInterface $output = null, ReconfigureOptions $options = new ReconfigureOptions()): self
     {
         return self::fromAnyComposer($composer, $output, $options);
     }
@@ -62,7 +62,7 @@ class HordeReconfigureFlow
      *
      * @TODO Refactor this once we require PHP 8.0 or higher
      */
-    private static function fromAnyComposer($composer, ?FlowIoInterface $output = null, ReconfigureOptions $options): self
+    private static function fromAnyComposer($composer, ?FlowIoInterface $output = null, ReconfigureOptions $options = new ReconfigureOptions()): self
     {
         $mode = $options->mode;
         // Symlink mode does not work on Windows
