@@ -41,8 +41,8 @@ class RegistrySnippetFileWriter
         /**
          * The config dir for the registry snippets
          */
-        $this->configRegistryDir = $this->configDir . '/horde/registry.d';
-        $this->webDir = $baseDir . '/web';
+        $this->configRegistryDir = $this->configDir . DIRECTORY_SEPARATOR . 'horde' . DIRECTORY_SEPARATOR . 'registry.d';
+        $this->webDir = $baseDir . DIRECTORY_SEPARATOR . 'web';
         $this->apps = $apps;
     }
 
@@ -66,7 +66,7 @@ $app_webroot = \'%s\';
 ',
                 $webrootUri,
                 $this->webDir,
-                $this->webDir . '/horde',
+                $this->webDir . DIRECTORY_SEPARATOR . 'horde',
                 '/horde'
             );
             $this->filesystem->filePutContentsIfModified($registry00FilePath, $registry00FileContent);
@@ -100,13 +100,13 @@ $app_webroot = \'%s\';
                 $registryAppSnippet .=
                 '$this->applications[\'' . $appName . '\'][\'fileroot\'] = \'' . $appInVendorDir . '\';' . PHP_EOL .
                 '$this->applications[\'' . $appName . '\'][\'templates\'] = \'' . $appInVendorDir . 'templates' . DIRECTORY_SEPARATOR . '\';' . PHP_EOL .
-                "\$this->applications['horde']['webroot'] = '{$webrootUri}';" . PHP_EOL .
+                "\$this->applications['horde']['webroot'] = '{$webrootUri}horde/';" . PHP_EOL .
                 '$this->applications[\'horde\'][\'jsfs\'] = $deployment_fileroot . \'/js/horde/\';' . PHP_EOL .
-                "\$this->applications['horde']['jsuri'] = '{$webrootUri}js/horde/';" . PHP_EOL .
+                "\$this->applications['horde']['jsuri'] = '{$webrootUri}js/horde';" . PHP_EOL .
                 '$this->applications[\'horde\'][\'staticfs\'] = $deployment_fileroot . \'/static\';' . PHP_EOL .
                 "\$this->applications['horde']['staticuri'] = '{$webrootUri}static/';" . PHP_EOL .
                 '$this->applications[\'horde\'][\'themesfs\'] = $deployment_fileroot . \'/themes/horde/\';' . PHP_EOL .
-                "\$this->applications['horde']['themesuri'] = '{$webrootUri}themes/horde/';" . PHP_EOL;
+                "\$this->applications['horde']['themesuri'] = '{$webrootUri}themes/horde';" . PHP_EOL;
             } else {
                 // A registry snippet should ensure the install dir is known
                 $registryAppFilename = $this->configRegistryDir . '/02-location-' . $appName . '.php';
@@ -116,9 +116,14 @@ $app_webroot = \'%s\';
                 '$this->applications[\'' . $appName . '\'][\'themesfs\'] = \'' . $this->webDir . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR . $appName . DIRECTORY_SEPARATOR . '\';' . PHP_EOL .
                 '$this->applications[\'' . $appName . '\'][\'jsfs\'] = \'' . $this->webDir . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR . $appName . DIRECTORY_SEPARATOR . '\';' . PHP_EOL .
                 "\$this->applications['$appName']['webroot'] = '{$webrootUri}$appName/';" . PHP_EOL .
-                "\$this->applications['$appName']['jsuri'] = '{$webrootUri}js/$appName/';" . PHP_EOL .
-                "\$this->applications['$appName']['themesuri'] = '{$webrootUri}themes/$appName/';" . PHP_EOL .
+                "\$this->applications['$appName']['jsuri'] = '{$webrootUri}js/$appName';" . PHP_EOL .
+                "\$this->applications['$appName']['themesuri'] = '{$webrootUri}themes/$appName';" . PHP_EOL .
                 '// End of ' . $appName . ' registry snippet' . PHP_EOL;
+            }
+            // Some versions of the middleware router require the routes.php file to exist even if empty
+            $routesFilePath = $appInVendorDir . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'routes.php';
+            if (!file_exists($routesFilePath)) {
+                $this->filesystem->filePutContentsIfModified($routesFilePath, '<?php' . PHP_EOL . '// Empty default routes file. Put custom routes into var/config/' . $appName . '/routes.local.php and run composer horde:reconfigure' . PHP_EOL);
             }
             $this->filesystem->filePutContentsIfModified($registryAppFilename, $registryAppSnippet);
         }
