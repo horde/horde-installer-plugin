@@ -99,28 +99,28 @@ class HordeReconfigureFlow
             $this->io->writeln('Force mode enabled, removing existing files');
             // Todo: Delegate to a method or helper class
             foreach ($hordeApps as $app) {
-                list($vendorName, $appName) = explode('/', $app);
+                [$vendorName, $appName] = explode('/', $app);
                 // horde.local.php files
                 $filesystem->remove($this->tree->getVarConfigDir() . '/' . $appName . '/horde.local.php');
-                $filesystem->remove($vendorDir . '/'. $vendorName . '/'. $appName .  '/config/horde.local.php');
+                $filesystem->remove($vendorDir . '/' . $vendorName . '/' . $appName . '/config/horde.local.php');
                 if ($app == 'horde') {
                     // remove horde registry file
                     $filesystem->remove($this->tree->getVarConfigDir() . '/horde/registry.d/00-horde.php');
                     $filesystem->remove($this->tree->getVarConfigDir() . '/horde/registry.d/01-location-' . $appName . '.php');
                 } else {
                     // remove app registry file
-                    $filesystem->remove($this->tree->getVarConfigDir() . '/horde/registry.d/02-location-' . $appName  . '.php');
+                    $filesystem->remove($this->tree->getVarConfigDir() . '/horde/registry.d/02-location-' . $appName . '.php');
                 }
                 // remove webdir items
                 $filesystem->remove($this->tree->getWebReadableRootDir() . '/' . $appName);
                 $filesystem->remove($this->tree->getWebReadableRootDir() . '/js/' . $appName);
                 $filesystem->remove($this->tree->getWebReadableRootDir() . '/themes/' . $appName);
                 // remove vendor dir items
-                $filesystem->remove($vendorDir . '/'. $vendorName . '/'. $appName .  '/config/conf.php');
-                $filesystem->remove($vendorDir . '/'. $vendorName . '/'. $appName .  '/config/hooks.php');
-                $filesystem->remove($vendorDir . '/'. $vendorName . '/'. $appName .  '/config/backends.local.php');
-                $filesystem->remove($vendorDir . '/'. $vendorName . '/'. $appName .  '/config/prefs.local.php');
-                $filesystem->remove($vendorDir . '/'. $vendorName . '/'. $appName .  '/config/routes.local.php');
+                $filesystem->remove($vendorDir . '/' . $vendorName . '/' . $appName . '/config/conf.php');
+                $filesystem->remove($vendorDir . '/' . $vendorName . '/' . $appName . '/config/hooks.php');
+                $filesystem->remove($vendorDir . '/' . $vendorName . '/' . $appName . '/config/backends.local.php');
+                $filesystem->remove($vendorDir . '/' . $vendorName . '/' . $appName . '/config/prefs.local.php');
+                $filesystem->remove($vendorDir . '/' . $vendorName . '/' . $appName . '/config/routes.local.php');
             }
         } else {
             $this->io->writeln('Force mode not enabled, skipping removal of existing files');
@@ -140,7 +140,7 @@ class HordeReconfigureFlow
             $filesystem,
             $rootPackageDir,
             $hordeApps,
-            $mode
+            $this->options
         );
         $registrySnippetFileWriter->run();
         $hordeLocalWriter = new HordeLocalFileWriter(
