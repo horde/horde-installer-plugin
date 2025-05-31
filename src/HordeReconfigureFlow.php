@@ -112,9 +112,9 @@ class HordeReconfigureFlow
                     $filesystem->remove($this->tree->getVarConfigDir() . '/horde/registry.d/02-location-' . $appName  . '.php');
                 }
                 // remove webdir items
-                $filesystem->remove($this->tree->getWebDir() . '/' . $appName);
-                $filesystem->remove($this->tree->getWebDir() . '/js/' . $appName);
-                $filesystem->remove($this->tree->getWebDir() . '/themes/' . $appName);
+                $filesystem->remove($this->tree->getWebReadableRootDir() . '/' . $appName);
+                $filesystem->remove($this->tree->getWebReadableRootDir() . '/js/' . $appName);
+                $filesystem->remove($this->tree->getWebReadableRootDir() . '/themes/' . $appName);
                 // remove vendor dir items
                 $filesystem->remove($vendorDir . '/'. $vendorName . '/'. $appName .  '/config/conf.php');
                 $filesystem->remove($vendorDir . '/'. $vendorName . '/'. $appName .  '/config/hooks.php');
