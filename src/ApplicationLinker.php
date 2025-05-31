@@ -198,7 +198,7 @@ class ApplicationLinker
                         $pathProxyToFile = $this->filesystem->findShortestPath(
                             $appWebDir . DIRECTORY_SEPARATOR . $relativePathName,
                             $appVendorDir . DIRECTORY_SEPARATOR . $relativePathName,
-                        );                        
+                        );
                     }
 
 
