@@ -26,13 +26,11 @@ class HordeReconfigureFlow
     /**
      * Modes: symlink, copy
      */
-    private string $mode = 'symlink';
     private DirectoryTree $tree;
 
-    public function __construct(DirectoryTree $tree, FlowIoInterface $io, string $mode = 'symlink')
+    public function __construct(DirectoryTree $tree, FlowIoInterface $io, public readonly ReconfigureOptions $options)
     {
         $this->io = $io;
-        $this->mode = $mode;
         $this->tree = $tree;
     }
 
@@ -43,14 +41,14 @@ class HordeReconfigureFlow
      * @param FlowIoInterface|null $output
      * @return self
      */
-    public static function fromComposer(Composer $composer, ?FlowIoInterface $output = null, string $mode = 'symlink'): self
+    public static function fromComposer(Composer $composer, ?FlowIoInterface $output = null, ReconfigureOptions $options): self
     {
-        return self::fromAnyComposer($composer, $output, $mode);
+        return self::fromAnyComposer($composer, $output, $options);
     }
 
-    public static function fromPartialComposer(PartialComposer $composer, ?FlowIoInterface $output = null, string $mode = 'symlink'): self
+    public static function fromPartialComposer(PartialComposer $composer, ?FlowIoInterface $output = null, ReconfigureOptions $options): self
     {
-        return self::fromAnyComposer($composer, $output, $mode);
+        return self::fromAnyComposer($composer, $output, $options);
     }
 
     /**
@@ -64,8 +62,9 @@ class HordeReconfigureFlow
      *
      * @TODO Refactor this once we require PHP 8.0 or higher
      */
-    private static function fromAnyComposer($composer, ?FlowIoInterface $output = null, string $mode = 'symlink'): self
+    private static function fromAnyComposer($composer, ?FlowIoInterface $output = null, ReconfigureOptions $options): self
     {
+        $mode = $options->mode;
         // Symlink mode does not work on Windows
         if ($mode == 'symlink') {
             $mode = strncasecmp(\PHP_OS, 'WIN', 3) === 0 ? 'copy' : 'symlink';
@@ -77,7 +76,7 @@ class HordeReconfigureFlow
         }
         $outputInterface = $output ?? new SymphonyOutputAdapter(ComposerFactory::createOutput());
         $tree->withVendorDir($vendorDir);
-        $flow = new HordeReconfigureFlow($tree, $outputInterface, $mode);
+        $flow = new HordeReconfigureFlow($tree, $outputInterface, $options);
         return $flow;
     }
     /**
@@ -86,6 +85,7 @@ class HordeReconfigureFlow
     public function run(): int
     {
         // Get installed packages of types handled by installer
+        $mode = $this->options->mode;
         $filesystem = new Filesystem();
         // This is sufficient for now but we actually know better
         $hordeApps = InstalledVersions::getInstalledPackagesByType('horde-application');
@@ -95,6 +95,36 @@ class HordeReconfigureFlow
         // We could simply ask InstalledVersions here, too
         $rootPackageDir = $this->tree->getRootPackageDir();
         $vendorDir = $this->tree->getVendorDir();
+        if ($this->options->force) {
+            $this->io->writeln('Force mode enabled, removing existing files');
+            // Todo: Delegate to a method or helper class
+            foreach ($hordeApps as $app) {
+                list($vendorName, $appName) = explode('/', $app);
+                // horde.local.php files
+                $filesystem->remove($this->tree->getConfigDir() . '/' . $appName . '/horde.local.php');
+                $filesystem->remove($vendorDir . '/'. $vendorName . '/'. $appName .  '/config/horde.local.php');
+                if ($app == 'horde') {
+                    // remove horde registry file
+                    $filesystem->remove($this->tree->getConfigDir() . '/horde/registry.d/00-horde.php');
+                    $filesystem->remove($this->tree->getConfigDir() . '/horde/registry.d/01-location-' . $appName . '.php');
+                } else {
+                    // remove app registry file
+                    $filesystem->remove($this->tree->getConfigDir() . '/horde/registry.d/02-location-' . $appName  . '.php');
+                }
+                // remove webdir items
+                $filesystem->remove($this->tree->getWebDir() . '/' . $appName);
+                $filesystem->remove($this->tree->getWebDir() . '/js/' . $appName);
+                $filesystem->remove($this->tree->getWebDir() . '/themes/' . $appName);
+                // remove vendor dir items
+                $filesystem->remove($vendorDir . '/'. $vendorName . '/'. $appName .  '/config/conf.php');
+                $filesystem->remove($vendorDir . '/'. $vendorName . '/'. $appName .  '/config/hooks.php');
+                $filesystem->remove($vendorDir . '/'. $vendorName . '/'. $appName .  '/config/backends.local.php');
+                $filesystem->remove($vendorDir . '/'. $vendorName . '/'. $appName .  '/config/prefs.local.php');
+                $filesystem->remove($vendorDir . '/'. $vendorName . '/'. $appName .  '/config/routes.local.php');
+            }
+        } else {
+            $this->io->writeln('Force mode not enabled, skipping removal of existing files');
+        }
         $this->io->writeln('Applying /presets for absent files in /var/config');
         $presetHandler = new PresetHandler($rootPackageDir, $filesystem);
         $presetHandler->handle();
@@ -104,24 +134,24 @@ class HordeReconfigureFlow
             $filesystem
         );
         $snippetHandler->handle();
-        $this->io->writeln('Configuration mode: ' . $this->mode);
+        $this->io->writeln('Configuration mode: ' . $mode);
         $this->io->writeln('Writing app configs to /var/config dir');
         $registrySnippetFileWriter = new RegistrySnippetFileWriter(
             $filesystem,
             $rootPackageDir,
             $hordeApps,
-            $this->mode
+            $mode
         );
         $registrySnippetFileWriter->run();
         $hordeLocalWriter = new HordeLocalFileWriter(
             $filesystem,
             $rootPackageDir,
             $hordeApps,
-            $this->mode
+            $mode
         );
         $hordeLocalWriter->run();
         $this->io->writeln('Linking app configs to /web Dir');
-        $configLinker = new ConfigLinker($rootPackageDir, $this->mode);
+        $configLinker = new ConfigLinker($rootPackageDir, $mode);
         $configLinker->run();
         $this->io->writeln('Linking javascript tree to /web/js');
         $jsLinker = new JsTreeLinker(
@@ -129,7 +159,7 @@ class HordeReconfigureFlow
             $this->tree,
             $hordeApps,
             $hordeLibraries,
-            $this->mode
+            $mode
         );
         $jsLinker->run();
         $this->io->writeln('Linking themes tree to /web/themes');
@@ -137,7 +167,7 @@ class HordeReconfigureFlow
             $filesystem,
             $rootPackageDir,
             $vendorDir,
-            $this->mode
+            $mode
         );
 
         foreach ($hordeThemes as $theme) {
@@ -151,7 +181,7 @@ class HordeReconfigureFlow
         }
         $themesHandler->setupThemes();
         // ApplicationLinker must run after all changes to /vendor
-        $appLinker = new ApplicationLinker($filesystem, $hordeApps, $rootPackageDir, $this->mode);
+        $appLinker = new ApplicationLinker($filesystem, $hordeApps, $rootPackageDir, $mode);
         $appLinker->run();
         return 0;
     }
