@@ -13,9 +13,9 @@ class ConfigLinker
     private string $baseDir;
     private string $configDir;
     private string $vendorDir;
-    private string $mode = 'symlink';
+    private string $mode = 'proxy';
 
-    public function __construct(string $baseDir, string $mode = 'symlink')
+    public function __construct(string $baseDir, string $mode = 'proxy')
     {
         $this->baseDir = $baseDir;
         $this->vendorDir = $baseDir . '/vendor';
@@ -70,7 +70,12 @@ class ConfigLinker
                 if (file_exists($linkName)) {
                     continue;
                 }
-                $this->mode == 'symlink' ? symlink($sourceName, $linkName) : copy($sourceName, $linkName);
+                if (in_array($this->mode, ['proxy', 'symlink'])) {
+                    symlink($sourceName, $linkName);
+
+                } else {
+                    copy($sourceName, $linkName);
+                }
             }
             // Do not overwrite existing files or links
         }

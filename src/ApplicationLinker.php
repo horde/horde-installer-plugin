@@ -29,7 +29,7 @@ class ApplicationLinker
      * @param string   $baseDir root package dir
      * @param string   $mode    Defaults to symlink
      */
-    public function __construct(Filesystem $filesystem, array $appPackages, string $baseDir, string $mode = 'symlink')
+    public function __construct(Filesystem $filesystem, array $appPackages, string $baseDir, string $mode = 'proxy')
     {
         $this->baseDir = $baseDir;
         $this->filesystem = $filesystem;

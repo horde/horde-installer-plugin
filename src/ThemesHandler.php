@@ -36,13 +36,13 @@ class ThemesHandler
 
     protected string $themesDir;
 
-    private string $mode = 'symlink';
+    private string $mode = 'proxy';
 
     public function __construct(
         Filesystem $filesystem,
         string $rootDir,
         string $vendorDir,
-        string $mode = 'symlink'
+        string $mode = 'proxy'
     ) {
         $this->filesystem = $filesystem;
         $this->rootDir = $rootDir;
@@ -101,7 +101,7 @@ class ThemesHandler
                     $themeName = $theme->getFileName();
                     $targetDir =  $this->themesDir . '/' . $packageName . '/' . $themeName;
                     $this->filesystem->ensureDirectoryExists(dirname($targetDir));
-                    if ($this->mode === 'symlink') {
+                    if (in_array($this->mode, ['proxy', 'symlink'])) {
                         $this->filesystem->relativeSymlink($themeSourceDir, $targetDir);
                     } else {
                         (new RecursiveCopy($themeSourceDir, $targetDir))->copy();
@@ -122,7 +122,7 @@ class ThemesHandler
                 $linkDir = $appDir . '/' . $appTheme['themeName'];
                 $target = $appTheme['linkDir'];
                 $this->filesystem->ensureDirectoryExists($appDir);
-                if ($this->mode === 'symlink') {
+                if (in_array($this->mode, ['proxy', 'symlink'])) {
                     $this->filesystem->relativeSymlink($target, $linkDir);
                 } else {
                     (new RecursiveCopy($target, $linkDir))->copy();

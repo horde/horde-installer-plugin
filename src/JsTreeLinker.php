@@ -28,7 +28,7 @@ class JsTreeLinker
      * @var string[]
      */
     private array $libs;
-    private string $mode = 'symlink';
+    private string $mode = 'proxy';
 
     /**
      * Constructor
@@ -43,7 +43,7 @@ class JsTreeLinker
         DirectoryTree $tree,
         array $apps = [],
         array $libs = [],
-        string $mode = 'symlink'
+        string $mode = 'proxy'
     ) {
         $this->filesystem = $filesystem;
         $this->vendorDir = $tree->getVendorDir();
