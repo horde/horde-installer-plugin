@@ -150,7 +150,9 @@ class ApplicationLinker
                         'vendor',
                         'test',
                         'tests',
+                        'migration',
                         'migrations',
+                        'examples',
                     ],
                 ];
                 $this->filesystem->emptyDirectory($appWebDir, true);
