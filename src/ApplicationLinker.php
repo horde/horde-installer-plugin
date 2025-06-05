@@ -148,6 +148,9 @@ class ApplicationLinker
                         'themes',
                         'templates',
                         'vendor',
+                        'test',
+                        'tests',
+                        'migrations',
                     ],
                 ];
                 $this->filesystem->emptyDirectory($appWebDir, true);
@@ -200,7 +203,6 @@ class ApplicationLinker
                             $appVendorDir . DIRECTORY_SEPARATOR . $relativePathName,
                         );
                     }
-
 
                     $originalContent = file_get_contents($appVendorDir . DIRECTORY_SEPARATOR . $relativePathName);
                     if (str_contains((string) $originalContent, '<?php')) {
