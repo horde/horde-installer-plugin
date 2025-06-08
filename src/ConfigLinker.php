@@ -65,6 +65,10 @@ class ConfigLinker
                 if (!is_dir($subPath)) {
                     mkdir($subPath, 0o770, true);
                 }
+                // Hooks don't need to be symlinked. Duplicating them can even confuse the autoloader
+                if (is_int(strpos($subPath, 'hooks.php'))) {
+                    continue;
+                }
                 $linkName = $targetDir . '/' . $relativeName;
                 $sourceName = $appConfigDir . '/' . $relativeName;
                 if (file_exists($linkName)) {
