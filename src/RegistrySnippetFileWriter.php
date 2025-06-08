@@ -122,7 +122,7 @@ $app_webroot = \'%s\';
             }
             // Some versions of the middleware router require the routes.php file to exist even if empty
             $routesFilePath = $appInVendorDir . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'routes.php';
-            if (!file_exists($routesFilePath)) {
+            if (is_dir(dirname($routesFilePath)) && !file_exists($routesFilePath)) {
                 $this->filesystem->filePutContentsIfModified($routesFilePath, '<?php' . PHP_EOL . '// Empty default routes file. Put custom routes into var/config/' . $appName . '/routes.local.php and run composer horde:reconfigure' . PHP_EOL);
             }
             $this->filesystem->filePutContentsIfModified($registryAppFilename, $registryAppSnippet);
