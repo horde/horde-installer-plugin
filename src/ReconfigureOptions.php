@@ -11,7 +11,8 @@ class ReconfigureOptions
     public function __construct(
         public readonly string $mode = 'proxy',
         public readonly bool $force = false,
-        public readonly string $webroot = '/'
+        public readonly string $webroot = '/',
+        public readonly array $extra = []
     ) {
         if (!in_array($mode, ['symlink', 'proxy', 'copy'])) {
             throw new InvalidArgumentException('Invalid mode. Must be "symlink", "proxy" or "copy". "symlink" is the current default.');
