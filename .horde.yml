@@ -42,4 +42,6 @@ dependencies:
 autoload:
   psr-4:
     Horde\Composer\: src/
+extra:
+  class: Horde\Composer\HordeInstallerPlugin
 vendor: horde
