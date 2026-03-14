@@ -1,22 +1,46 @@
 {
     "name": "horde/horde-installer-plugin",
-    "description": "Horde.org Framework's composer 2.x plugin",
+    "description": "Horde Installer Plugin for Composer",
     "type": "composer-plugin",
+    "homepage": "https://github.com/horde/horde-installer-plugin",
     "license": "MIT",
-    "autoload": {
-        "psr-4": {"Horde\\Composer\\": "src/"}
-    },
-    "extra": {
-        "class": "Horde\\Composer\\HordeInstallerPlugin"
-    },
+    "authors": [
+        {
+            "name": "Ralf Lang",
+            "email": "ralf.lang@ralf-lang.de",
+            "role": "lead"
+        }
+    ],
+    "time": "2026-03-14",
+    "repositories": [],
     "require": {
-        "composer-plugin-api": "~2.0",
-        "php": ">=8.1"
+        "php": ">=8.1",
+        "composer-plugin-api": "^2.2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^12",
-        "composer/composer": "~2.0",
+        "composer/composer": "^2.2",
         "friendsofphp/php-cs-fixer": "^3",
         "phpstan/phpstan": "^2"
+    },
+    "suggest": {},
+    "autoload": {
+        "psr-4": {
+            "Horde\\Composer\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Horde\\Horde-installer-plugin\\Test\\": "test/",
+            "Horde\\Horde-installer-plugin\\Test\\Fixture\\": "test/fixture/"
+        }
+    },
+    "config": {
+        "allow-plugins": {}
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-FRAMEWORK_6_0": "3.x-dev"
+        }
     }
 }

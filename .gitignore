@@ -36,3 +36,31 @@ tools/
 .php-cs-fixer.cache
 .phpunit.cache/
 composer.lock
+
+# Added by horde-components QC --fix-qc-issues
+# Build artifacts directory
+/build/
+# PHPStorm IDE settings
+/.idea/
+# VSCode IDE settings
+/.vscode/
+# Claude Code CLI cache and state
+/.claude/
+# Cline extension data
+/.cline/
+# PHPUnit result cache
+/.phpunit.result.cache
+# PHPStan local configuration (if not committed)
+/phpstan.neon
+# PHPStan cache directory
+/.phpstan.cache/
+
+# Added by horde-components QC --fix-qc-issues
+# Code coverage reports
+/coverage/
+# Clover coverage report
+/clover.xml
+# PCOV coverage report
+/.pcov.xml
+# Local PHP configuration files
+**/*.local.php
