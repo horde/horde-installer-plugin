@@ -39,6 +39,7 @@
         "allow-plugins": {}
     },
     "extra": {
+        "class": "Horde\\Composer\\HordeInstallerPlugin",
         "branch-alias": {
             "dev-FRAMEWORK_6_0": "3.x-dev"
         }

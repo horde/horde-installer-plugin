@@ -1,4 +1,15 @@
 ---
+3.1.0:
+  api: 3.1.0
+  state:
+    release: stable
+    api: stable
+  date: 2026-03-14
+  license:
+    identifier: MIT
+    uri: https://spdx.org/licenses/MIT.html
+  notes: |-
+    feat: Add extra: classname needed by modern composer plugin APIs
 3.0.4:
   api: 3.0.4
   state:
