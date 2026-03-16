@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Composer;
 
+use Composer\IO\IOInterface;
 use DirectoryIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -14,13 +15,15 @@ class ConfigLinker
     private string $configDir;
     private string $vendorDir;
     private string $mode = 'proxy';
+    private ?IOInterface $io = null;
 
-    public function __construct(string $baseDir, string $mode = 'proxy')
+    public function __construct(string $baseDir, string $mode = 'proxy', ?IOInterface $io = null)
     {
         $this->baseDir = $baseDir;
         $this->vendorDir = $baseDir . '/vendor';
         $this->configDir = $this->baseDir . '/var/config';
         $this->mode = $mode;
+        $this->io = $io;
     }
     /**
      * Symlink contents of var/config
@@ -48,7 +51,7 @@ class ConfigLinker
             // Next if no corresponding web/$app/config dir exists
             $appConfigDir = $appFileInfo->getPathname();
             // TODO: Make this work for other vendors
-            $targetDir = $this->vendorDir . '/horde//' . $app . '/config';
+            $targetDir = $this->vendorDir . '/horde/' . $app . '/config';
             if (!is_dir($targetDir)) {
                 continue;
             }
@@ -71,9 +74,27 @@ class ConfigLinker
                 }
                 $linkName = $targetDir . '/' . $relativeName;
                 $sourceName = $appConfigDir . '/' . $relativeName;
-                if (file_exists($linkName)) {
+
+                // Check if link exists (including broken symlinks)
+                if (is_link($linkName)) {
+                    // Remove broken symlinks before recreating
+                    if (!file_exists($linkName)) {
+                        if ($this->io && $this->io->isVerbose()) {
+                            $this->io->write(sprintf(
+                                '  <comment>Removing broken symlink:</comment> %s',
+                                str_replace($this->vendorDir . '/', 'vendor/', $linkName),
+                            ));
+                        }
+                        unlink($linkName);
+                    } else {
+                        // Valid symlink exists, skip
+                        continue;
+                    }
+                } elseif (file_exists($linkName)) {
+                    // Regular file exists, skip
                     continue;
                 }
+
                 if (in_array($this->mode, ['proxy', 'symlink'])) {
                     symlink($sourceName, $linkName);
 

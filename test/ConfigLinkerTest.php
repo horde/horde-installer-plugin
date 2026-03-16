@@ -31,6 +31,29 @@ class ConfigLinkerTest extends TestCase
         $this->assertFileDoesNotExist($this->fixture . '/vendor/horde/lunch/config/conf.php');
     }
 
+    public function testBrokenSymlinkDetection()
+    {
+        // First run creates symlinks
+        $this->linker->run();
+        $targetFile = $this->fixture . '/vendor/horde/horde/config/hooks.php';
+        $this->assertFileExists($targetFile);
+
+        // Create broken symlink by unlinking and recreating with bad target
+        unlink($targetFile);
+        symlink('/nonexistent/path/hooks.php', $targetFile);
+
+        // Verify it's a broken symlink
+        $this->assertTrue(is_link($targetFile));
+        $this->assertFalse(file_exists($targetFile));
+
+        // Second run should remove broken symlink and recreate
+        $this->linker->run();
+
+        // Now it should be a valid symlink
+        $this->assertTrue(is_link($targetFile));
+        $this->assertTrue(file_exists($targetFile));
+    }
+
     public function tearDown(): void
     {
         array_map('unlink', glob($this->fixture . '/vendor/horde/horde/config/*.php'));

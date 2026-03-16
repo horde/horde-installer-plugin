@@ -131,7 +131,7 @@ class HordeReconfigureFlow
         $this->io->writeln('Looking for registry snippets from apps');
         $snippetHandler = new PackageDocRegistrySnippetHandler(
             $this->tree,
-            $filesystem
+            $filesystem,
         );
         $snippetHandler->handle();
         $this->io->writeln('Configuration mode: ' . $mode);
@@ -140,18 +140,18 @@ class HordeReconfigureFlow
             $filesystem,
             $rootPackageDir,
             $hordeApps,
-            $this->options
+            $this->options,
         );
         $registrySnippetFileWriter->run();
         $hordeLocalWriter = new HordeLocalFileWriter(
             $filesystem,
             $rootPackageDir,
             $hordeApps,
-            $mode
+            $mode,
         );
         $hordeLocalWriter->run();
         $this->io->writeln('Linking app configs to /web Dir');
-        $configLinker = new ConfigLinker($rootPackageDir, $mode);
+        $configLinker = new ConfigLinker($rootPackageDir, $mode, $this->io);
         $configLinker->run();
         $this->io->writeln('Linking javascript tree to /web/js');
         $jsLinker = new JsTreeLinker(
@@ -159,7 +159,7 @@ class HordeReconfigureFlow
             $this->tree,
             $hordeApps,
             $hordeLibraries,
-            $mode
+            $mode,
         );
         $jsLinker->run();
         $this->io->writeln('Linking themes tree to /web/themes');
@@ -167,7 +167,7 @@ class HordeReconfigureFlow
             $filesystem,
             $rootPackageDir,
             $vendorDir,
-            $mode
+            $mode,
         );
 
         foreach ($hordeThemes as $theme) {
