@@ -1,4 +1,15 @@
 ---
+3.3.1:
+  api: 3.3.1
+  state:
+    release: stable
+    api: stable
+  date: 2026-03-17
+  license:
+    identifier: MIT
+    uri: https://spdx.org/licenses/MIT.html
+  notes: |-
+    fix: Expose installer class in extra
 3.3.0:
   api: 3.3.0
   state:
