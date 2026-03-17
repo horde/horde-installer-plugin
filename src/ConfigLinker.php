@@ -6,6 +6,7 @@ namespace Horde\Composer;
 
 use Composer\IO\IOInterface;
 use DirectoryIterator;
+use Horde\Composer\IOAdapter\FlowIoInterface;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -15,9 +16,9 @@ class ConfigLinker
     private string $configDir;
     private string $vendorDir;
     private string $mode = 'proxy';
-    private ?IOInterface $io = null;
+    private IOInterface|FlowIoInterface|null $io = null;
 
-    public function __construct(string $baseDir, string $mode = 'proxy', ?IOInterface $io = null)
+    public function __construct(string $baseDir, string $mode = 'proxy', IOInterface|FlowIoInterface|null $io = null)
     {
         $this->baseDir = $baseDir;
         $this->vendorDir = $baseDir . '/vendor';
@@ -79,11 +80,20 @@ class ConfigLinker
                 if (is_link($linkName)) {
                     // Remove broken symlinks before recreating
                     if (!file_exists($linkName)) {
-                        if ($this->io && $this->io->isVerbose()) {
-                            $this->io->write(sprintf(
-                                '  <comment>Removing broken symlink:</comment> %s',
-                                str_replace($this->vendorDir . '/', 'vendor/', $linkName),
-                            ));
+                        if ($this->io) {
+                            // Check if verbose output is supported (IOInterface only)
+                            $isVerbose = ($this->io instanceof IOInterface) && $this->io->isVerbose();
+                            if ($isVerbose) {
+                                $message = sprintf(
+                                    '  <comment>Removing broken symlink:</comment> %s',
+                                    str_replace($this->vendorDir . '/', 'vendor/', $linkName),
+                                );
+                                if ($this->io instanceof IOInterface) {
+                                    $this->io->write($message);
+                                } else {
+                                    $this->io->writeln($message);
+                                }
+                            }
                         }
                         unlink($linkName);
                     } else {
