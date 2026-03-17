@@ -183,6 +183,10 @@ class HordeReconfigureFlow
         // ApplicationLinker must run after all changes to /vendor
         $appLinker = new ApplicationLinker($filesystem, $hordeApps, $rootPackageDir, $mode);
         $appLinker->run();
+        // Clean up obsolete PHP files from web/ dirs (after routing migrations)
+        $this->io->writeln('Cleaning up obsolete web files');
+        $webFilesCleaner = new ObsoleteWebFilesCleaner($hordeApps, $rootPackageDir, $this->io);
+        $webFilesCleaner->run();
         return 0;
     }
 }
