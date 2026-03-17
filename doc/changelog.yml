@@ -1,4 +1,31 @@
 ---
+3.3.0:
+  api: 3.3.0
+  state:
+    release: stable
+    api: stable
+  date: 2026-03-17
+  license:
+    identifier: MIT
+    uri: https://spdx.org/licenses/MIT.html
+  notes: |-
+    fix: Remove self-dependency from composer.json require section
+    feat: Clean up obsolete PHP files after route migrations
+    fix: Accept both IOInterface and FlowIoInterface in ConfigLinker
+    fix(reconfigure): Redo broken symlinks
+3.2.0:
+  api: 3.2.0
+  state:
+    release: stable
+    api: stable
+  date: 2026-03-17
+  license:
+    identifier: MIT
+    uri: https://spdx.org/licenses/MIT.html
+  notes: |-
+    feat: Clean up obsolete PHP files after route migrations
+    fix: Accept both IOInterface and FlowIoInterface in ConfigLinker
+    fix(reconfigure): Redo broken symlinks
 3.1.0:
   api: 3.1.0
   state:
