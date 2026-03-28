@@ -26,6 +26,7 @@ run-tests.log
 /test/*/*/*/*.exp
 /test/*/*/*/*.log
 /test/*/*/*/*.out
+/test/fixture/RecursiveCopy/dest/
 
 vendor/
 web/

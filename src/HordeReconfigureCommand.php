@@ -61,7 +61,7 @@ class HordeReconfigureCommand extends BaseCommand
         $dirty = false;
         if ($mode == '') {
             $mode = $extra['horde-reconfigure']['mode'] ?? 'proxy';
-        } else  {
+        } else {
             $extra['horde-reconfigure']['mode'] = $mode;
         }
         if ($input->getOption('webroot')) {

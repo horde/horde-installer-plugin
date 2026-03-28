@@ -35,5 +35,46 @@ class RecursiveCopyTest extends TestCase
         $this->assertFileExists($this->fixture . '/dest/sub1/sub2/egal.txt');
     }
 
-    public function tearDown(): void {}
+    public function tearDown(): void
+    {
+        // Clean up copied files
+        if (is_dir($this->fixture . '/dest')) {
+            $this->recursiveRemoveDirectory($this->fixture . '/dest');
+        }
+    }
+
+    /**
+     * Recursively remove a directory
+     *
+     * @param string $dir Directory to remove
+     */
+    private function recursiveRemoveDirectory(string $dir): void
+    {
+        if (!is_dir($dir)) {
+            return;
+        }
+
+        $items = scandir($dir);
+        if ($items === false) {
+            return;
+        }
+
+        foreach ($items as $item) {
+            if ($item === '.' || $item === '..') {
+                continue;
+            }
+
+            $path = $dir . '/' . $item;
+
+            if (is_link($path)) {
+                unlink($path);
+            } elseif (is_dir($path)) {
+                $this->recursiveRemoveDirectory($path);
+            } else {
+                unlink($path);
+            }
+        }
+
+        rmdir($dir);
+    }
 }

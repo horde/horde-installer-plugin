@@ -73,9 +73,9 @@ class ThemesCatalog
         }
         $dir = new DirectoryIterator($installDir);
         foreach ($dir as $entry) {
-            if (!$entry->isDir() ||
-                $entry->isDot() ||
-                $entry->getFilename()[0] == '.'
+            if (!$entry->isDir()
+                || $entry->isDot()
+                || $entry->getFilename()[0] == '.'
             ) {
                 continue;
             }

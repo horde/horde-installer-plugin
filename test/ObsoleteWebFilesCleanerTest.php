@@ -26,18 +26,18 @@ class ObsoleteWebFilesCleanerTest extends TestCase
 
         // Create test directory structure
         if (!is_dir($this->fixture)) {
-            mkdir($this->fixture, 0755, true);
+            mkdir($this->fixture, 0o755, true);
         }
 
         // Create vendor/horde/turba with some files
         $vendorDir = $this->fixture . '/vendor/horde/turba';
-        mkdir($vendorDir, 0755, true);
+        mkdir($vendorDir, 0o755, true);
         file_put_contents($vendorDir . '/index.php', '<?php // Vendor index');
         file_put_contents($vendorDir . '/browse.php', '<?php // Vendor browse');
 
         // Create web/turba with matching and non-matching files
         $webDir = $this->fixture . '/web/turba';
-        mkdir($webDir, 0755, true);
+        mkdir($webDir, 0o755, true);
         file_put_contents($webDir . '/index.php', '<?php // Web index');
         file_put_contents($webDir . '/browse.php', '<?php // Web browse');
         file_put_contents($webDir . '/smartmobile.php', '<?php // Obsolete file');
