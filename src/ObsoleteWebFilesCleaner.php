@@ -19,7 +19,6 @@ use RecursiveIteratorIterator;
  */
 class ObsoleteWebFilesCleaner
 {
-    private string $baseDir;
     private string $vendorDir;
     private string $webDir;
     private IOInterface|FlowIoInterface|null $io = null;
@@ -38,7 +37,6 @@ class ObsoleteWebFilesCleaner
     public function __construct(array $appPackages, string $baseDir, IOInterface|FlowIoInterface|null $io = null)
     {
         $this->appPackages = $appPackages;
-        $this->baseDir = $baseDir;
         $this->vendorDir = $baseDir . '/vendor';
         $this->webDir = $baseDir . '/web';
         $this->io = $io;
