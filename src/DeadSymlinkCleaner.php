@@ -21,7 +21,6 @@ use RecursiveIteratorIterator;
  */
 class DeadSymlinkCleaner
 {
-    private string $baseDir;
     private string $webDir;
     private ?FlowIoInterface $io = null;
 
@@ -38,7 +37,6 @@ class DeadSymlinkCleaner
      */
     public function __construct(string $baseDir, ?FlowIoInterface $io = null)
     {
-        $this->baseDir = $baseDir;
         $this->webDir = $baseDir . '/web';
         $this->io = $io;
     }
