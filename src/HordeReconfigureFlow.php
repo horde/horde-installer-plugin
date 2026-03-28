@@ -187,6 +187,10 @@ class HordeReconfigureFlow
         $this->io->writeln('Cleaning up obsolete web files');
         $webFilesCleaner = new ObsoleteWebFilesCleaner($hordeApps, $rootPackageDir, $this->io);
         $webFilesCleaner->run();
+        // Clean up dead symlinks in web/js/ and web/themes/
+        $this->io->writeln('Cleaning up dead symlinks in web/js/ and web/themes/');
+        $symlinkCleaner = new DeadSymlinkCleaner($rootPackageDir, $this->io);
+        $symlinkCleaner->run();
         return 0;
     }
 }
