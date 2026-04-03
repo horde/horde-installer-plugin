@@ -20,7 +20,7 @@ authors:
     active: true
     role: lead
 version:
-  release: 3.4.0
+  release: 3.4.1
   api: 3.0.0
 state:
   release:
@@ -45,3 +45,5 @@ autoload:
 extra:
   class: Horde\Composer\HordeInstallerPlugin
 vendor: horde
+keywords:
+  - installer

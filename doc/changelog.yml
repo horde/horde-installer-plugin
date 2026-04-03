@@ -1,4 +1,15 @@
 ---
+3.4.1:
+  api: 3.4.1
+  state:
+    release: stable
+    api: stable
+  date: 2026-04-03
+  license:
+    identifier: MIT
+    uri: https://spdx.org/licenses/MIT.html
+  notes: |-
+    fix: Outdated info presented about ConfigLinker's activity
 3.4.0:
   api: 3.4.0
   state:
