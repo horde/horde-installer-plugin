@@ -128,6 +128,14 @@ class HordeReconfigureFlow
         $this->io->writeln('Applying /presets for absent files in /var/config');
         $presetHandler = new PresetHandler($rootPackageDir, $filesystem);
         $presetHandler->handle();
+        $this->io->writeln('Distributing config .dist files from vendor to /var/config');
+        $configDistributor = new ConfigDistributor(
+            $rootPackageDir,
+            $vendorDir,
+            $filesystem,
+            $this->io,
+        );
+        $configDistributor->run($hordeApps);
         $this->io->writeln('Looking for registry snippets from apps');
         $snippetHandler = new PackageDocRegistrySnippetHandler(
             $this->tree,
