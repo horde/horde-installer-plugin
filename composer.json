@@ -14,7 +14,7 @@
     "keywords": [
         "installer"
     ],
-    "time": "2026-04-03",
+    "time": "2026-04-12",
     "repositories": [],
     "require": {
         "php": ">=8.1",

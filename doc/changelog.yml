@@ -1,4 +1,17 @@
 ---
+3.5.0:
+  api: 3.5.0
+  state:
+    release: stable
+    api: stable
+  date: 2026-04-12
+  license:
+    identifier: MIT
+    uri: https://spdx.org/licenses/MIT.html
+  notes: |-
+    test: Unit test for VendorAssetlinker
+    feat: VendorAssetLinker can link assets from external package A due to metadata in horde package B
+    feat: Provide vendor configs as .dist to var/config and cleanup orphans
 3.4.1:
   api: 3.4.1
   state:
