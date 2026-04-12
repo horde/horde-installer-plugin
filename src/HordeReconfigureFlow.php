@@ -170,6 +170,15 @@ class HordeReconfigureFlow
             $mode,
         );
         $jsLinker->run();
+        $this->io->writeln('Linking vendor assets to /web/js');
+        $vendorAssetLinker = new VendorAssetLinker(
+            $filesystem,
+            $vendorDir,
+            $this->tree->getWebReadableRootDir(),
+            array_merge($hordeApps, $hordeLibraries),
+            $mode,
+        );
+        $vendorAssetLinker->run();
         $this->io->writeln('Linking themes tree to /web/themes');
         $themesHandler = new ThemesHandler(
             $filesystem,
