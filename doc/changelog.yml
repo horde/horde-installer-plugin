@@ -1,4 +1,15 @@
 ---
+3.6.0:
+  api: 3.6.0
+  state:
+    release: stable
+    api: stable
+  date: 2026-04-15
+  license:
+    identifier: MIT
+    uri: https://spdx.org/licenses/MIT.html
+  notes: |-
+    feat: consistently use directory separator constant and eliminate reliance on runtime variables
 3.5.0:
   api: 3.5.0
   state:
