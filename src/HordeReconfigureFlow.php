@@ -20,6 +20,8 @@ use Horde\Composer\IOAdapter\SymphonyOutputAdapter;
 use RuntimeException;
 use strncasecmp;
 
+use const PHP_OS;
+
 class HordeReconfigureFlow
 {
     private FlowIoInterface $io;
@@ -67,7 +69,7 @@ class HordeReconfigureFlow
         $mode = $options->mode;
         // Symlink mode does not work on Windows
         if ($mode == 'symlink') {
-            $mode = strncasecmp(\PHP_OS, 'WIN', 3) === 0 ? 'copy' : 'symlink';
+            $mode = strncasecmp(PHP_OS, 'WIN', 3) === 0 ? 'copy' : 'symlink';
         }
         $tree = DirectoryTree::fromComposerJsonPath(ComposerFactory::getComposerFile());
         $vendorDir = $composer->getConfig()->get('vendor-dir');

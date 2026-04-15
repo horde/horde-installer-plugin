@@ -56,8 +56,8 @@ class PackageDocRegistrySnippetHandler
                 }
                 $files = new DirectoryIterator($sourceDir);
                 foreach ($files as $entry) {
-                    if ($files->isFile()) {
-                        copy($files->getPathName(), $this->configRegistryDir . '/' . $entry);
+                    if ($entry->isFile()) {
+                        copy($entry->getPathName(), $this->configRegistryDir . '/' . $entry->getFilename());
                     }
                 }
             }

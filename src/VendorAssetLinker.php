@@ -54,7 +54,11 @@ class VendorAssetLinker
             if (!is_readable($composerJsonPath)) {
                 continue;
             }
-            $composerData = json_decode(file_get_contents($composerJsonPath));
+            $composerJsonContent = file_get_contents($composerJsonPath);
+            if ($composerJsonContent === false) {
+                continue;
+            }
+            $composerData = json_decode($composerJsonContent);
             if (!is_object($composerData)) {
                 continue;
             }

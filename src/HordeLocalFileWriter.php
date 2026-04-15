@@ -9,21 +9,18 @@ use Composer\Util\Filesystem;
 class HordeLocalFileWriter
 {
     /**
-     * List of apps
-     *
      * @var string[]
      */
     private array $apps;
     private string $configDir;
     private string $vendorDir;
     private string $webDir;
-
-    private Filesystem $filesystem;
     private string $vendorHordeDir;
+    private Filesystem $filesystem;
+    private TemplateRenderer $renderer;
+    private string $templateDir;
 
     /**
-     * Undocumented function
-     *
      * @param Filesystem $filesystem
      * @param string $baseDir
      * @param string[] $apps
@@ -36,6 +33,8 @@ class HordeLocalFileWriter
         $this->vendorHordeDir = $this->vendorDir . DIRECTORY_SEPARATOR . 'horde' . DIRECTORY_SEPARATOR . 'horde';
         $this->webDir = $baseDir . '/web';
         $this->apps = $apps;
+        $this->renderer = new TemplateRenderer();
+        $this->templateDir = dirname(__DIR__) . '/templates/horde-local';
     }
 
     public function run(): void
@@ -55,30 +54,31 @@ class HordeLocalFileWriter
         if ($this->mode === 'proxy') {
             $hordeBaseDir = $this->vendorHordeDir;
         }
-        $hordeLocalFileContent = sprintf(
-            "<?php\nif (!defined('HORDE_BASE')) define('HORDE_BASE', '%s');\nif (!defined('HORDE_CONFIG_BASE')) define('HORDE_CONFIG_BASE', '%s');\n",
-            $hordeBaseDir,
-            $this->configDir
-        );
-        // special case horde/horde needs to require the composer autoloader
-        if ($app == 'horde/horde') {
-            $hordeLocalFileContent .= $this->_legacyWorkaround($this->filesystem->normalizePath($this->vendorDir));
-            $hordeLocalFileContent .= "require_once('" . $this->vendorDir . "/autoload.php');";
-        }
-        $appNameUpper = strtoupper($name);
-        $hordeLocalFileContent .= sprintf(
-            "\nif (!defined('%s_TEMPLATES')) define('%s_TEMPLATES', '%s');\n",
-            $appNameUpper,
-            $appNameUpper,
-            $this->vendorDir . DIRECTORY_SEPARATOR . $vendor . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR . 'templates',
-        );
 
+        $ds = DIRECTORY_SEPARATOR;
+        $appNameUpper = strtoupper($name);
+        $templatesDir = $this->vendorDir . $ds . $vendor . $ds . $name . $ds . 'templates';
         $autoloadExtraFilePath = $this->baseDir . '/var/config/autoload-extra.php';
-        if (file_exists($autoloadExtraFilePath)) {
-            $hordeLocalFileContent .= "\nrequire_once('$autoloadExtraFilePath')\n";
+
+        $vars = [
+            'hordeBaseDir' => $hordeBaseDir,
+            'configDir' => $this->configDir,
+            'appNameUpper' => $appNameUpper,
+            'templatesDir' => $templatesDir,
+            'autoloadExtraFilePath' => file_exists($autoloadExtraFilePath) ? $autoloadExtraFilePath : null,
+        ];
+
+        if ($app == 'horde/horde') {
+            $vars['legacyWorkaround'] = $this->_legacyWorkaround($this->filesystem->normalizePath($this->vendorDir));
+            $vars['vendorDir'] = $this->vendorDir;
+            $content = $this->renderer->render($this->templateDir . '/horde.php', $vars);
+        } else {
+            $content = $this->renderer->render($this->templateDir . '/app.php', $vars);
         }
-        $this->filesystem->filePutContentsIfModified($path, $hordeLocalFileContent);
+
+        $this->filesystem->filePutContentsIfModified($path, $content);
     }
+
     /**
      * Legacy support
      *
@@ -86,19 +86,16 @@ class HordeLocalFileWriter
      * hard requires etc until they are resolved in code
      *
      * @param string $path Path to vendor dir
-     * @return string
      */
     protected function _legacyWorkaround(string $path): string
     {
         return sprintf(
-            "ini_set('include_path', '%s/horde/autoloader/lib%s%s/horde/form/lib/%s' .  ini_get('include_path'));
-        require_once('%s/horde/core/lib/Horde/Core/Nosql.php');
-        ",
+            "ini_set('include_path', '%s/horde/autoloader/lib%s%s/horde/form/lib/%s' .  ini_get('include_path'));\nrequire_once('%s/horde/core/lib/Horde/Core/Nosql.php');\n",
             $path,
             PATH_SEPARATOR,
             $path,
             PATH_SEPARATOR,
-            $path
+            $path,
         );
     }
 }

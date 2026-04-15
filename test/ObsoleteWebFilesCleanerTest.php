@@ -4,6 +4,8 @@ namespace Horde\Composer\Test;
 
 use PHPUnit\Framework\TestCase;
 use Horde\Composer\ObsoleteWebFilesCleaner;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 /**
  * @author     Ralf Lang <ralf.lang@ralf-lang.de>
@@ -119,9 +121,9 @@ class ObsoleteWebFilesCleanerTest extends TestCase
             return;
         }
 
-        $items = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($directory, \RecursiveDirectoryIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::CHILD_FIRST
+        $items = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST
         );
 
         foreach ($items as $item) {

@@ -49,9 +49,9 @@ class HordeReconfigureCommand extends BaseCommand
         }
         $mode = (string) $input->getOption('mode');
         $force = (bool) $input->getOption('force');
-        $uri = $input->getOption('webroot');
-        $app = $input->getOption('app');
-        $resource = $input->getOption('resource');
+        $uri = (string) $input->getOption('webroot');
+        $app = (string) $input->getOption('app');
+        $resource = (string) $input->getOption('resource');
         if (!str_ends_with($uri, '/')) {
             $uri .= '/';
         }
@@ -62,9 +62,12 @@ class HordeReconfigureCommand extends BaseCommand
         if ($mode == '') {
             $mode = $extra['horde-reconfigure']['mode'] ?? 'proxy';
         } else {
+            $extra['horde-reconfigure'] ??= [];
             $extra['horde-reconfigure']['mode'] = $mode;
         }
-        if ($input->getOption('webroot')) {
+        if ($uri !== '') {
+            $extra['horde-registry'] ??= [];
+            $extra['horde-registry'][$app] ??= [];
             $extra['horde-registry'][$app][$resource] = $uri;
             $dirty = true;
         }

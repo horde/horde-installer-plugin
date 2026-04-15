@@ -18,7 +18,11 @@ class DirectoryTree
         if (!is_file($path)) {
             throw new Exception('Expected full path of composer.json file');
         }
-        $json = json_decode(file_get_contents($path));
+        $content = file_get_contents($path);
+        if ($content === false) {
+            throw new Exception('Could not read file: ' . $path);
+        }
+        $json = json_decode($content);
         if (!is_object($json)) {
             throw new Exception('Could not parse json file');
         }

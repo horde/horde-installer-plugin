@@ -9,6 +9,7 @@ use DirectoryIterator;
 use Horde\Composer\IOAdapter\FlowIoInterface;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use Exception;
 
 /**
  * Cleans up obsolete PHP files from web directories.
@@ -95,7 +96,7 @@ class ObsoleteWebFilesCleaner
                 new RecursiveDirectoryIterator($appWebDir, RecursiveDirectoryIterator::SKIP_DOTS),
                 RecursiveIteratorIterator::CHILD_FIRST
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // If we can't iterate, skip this app
             return;
         }

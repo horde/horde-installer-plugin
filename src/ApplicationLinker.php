@@ -207,7 +207,10 @@ class ApplicationLinker
                     }
 
                     $originalContent = file_get_contents($appVendorDir . DIRECTORY_SEPARATOR . $relativePathName);
-                    if (str_contains((string) $originalContent, '<?php')) {
+                    if ($originalContent === false) {
+                        continue;
+                    }
+                    if (str_contains($originalContent, '<?php')) {
                         // PHP files get a proxy
                         $content = "<?php\nrequire_once(__DIR__ . '/$pathProxyToAutoloader');\nrequire_once(__DIR__ . '/$pathProxyToFile');";
                     } else {
