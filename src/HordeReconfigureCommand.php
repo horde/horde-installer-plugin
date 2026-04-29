@@ -10,6 +10,7 @@ use Composer\Plugin\Capability\CommandProvider as CommandProviderCapability;
 use Composer\Package\Dumper\ArrayDumper;
 use Composer\Json\JsonFile;
 use Composer\Config\JsonConfigSource;
+use stdClass;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -77,6 +78,7 @@ class HordeReconfigureCommand extends BaseCommand
             $jsonFile = new JsonFile($file);
             $data = $jsonFile->read();
             $data['extra'] = $extra;
+            $data = $this->preserveJsonObjects($data);
             $jsonFile->write($data);
         }
         $webroot = $extra['horde-registry'][$app][$resource] ?? '/';
@@ -95,5 +97,37 @@ class HordeReconfigureCommand extends BaseCommand
             $flow = HordeReconfigureFlow::fromComposer($composer, new SymphonyOutputAdapter($output), $reconfigureOptions);
         }
         return $flow->run();
+    }
+
+    /**
+     * Ensure Composer schema-required object fields remain objects after
+     * round-tripping through json_decode(..., true) / json_encode().
+     *
+     * json_decode with associative mode converts empty JSON objects {} to
+     * empty PHP arrays []. json_encode then writes [] instead of {},
+     * violating the Composer JSON schema.
+     *
+     * @param array<string, mixed> $data  The decoded composer.json data
+     * @return array<string, mixed>
+     */
+    private function preserveJsonObjects(array $data): array
+    {
+        $objectFields = [
+            'suggest',
+            'autoload',
+            'autoload-dev',
+            'config',
+            'scripts',
+            'scripts-aliases',
+            'extra',
+        ];
+
+        foreach ($objectFields as $field) {
+            if (array_key_exists($field, $data) && $data[$field] === []) {
+                $data[$field] = new stdClass();
+            }
+        }
+
+        return $data;
     }
 }
