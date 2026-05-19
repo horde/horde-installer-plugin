@@ -1,4 +1,15 @@
 ---
+3.6.1-RC1:
+  api: 3.6.1-RC1
+  state:
+    release: RC
+    api: RC
+  date: 2026-05-19
+  license:
+    identifier: MIT
+    uri: https://spdx.org/licenses/MIT.html
+  notes: |-
+    fix: Ensure we don't do empty object keys as empty arrays
 3.6.0:
   api: 3.6.0
   state:
