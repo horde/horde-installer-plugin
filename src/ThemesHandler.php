@@ -93,11 +93,7 @@ class ThemesHandler
                     if (!$theme->isDir() || $theme->isDot()) {
                         continue;
                     }
-                    // Is it really a horde-style theme?
                     $themeSourceDir = $theme->getPathname();
-                    if (!file_exists($themeSourceDir . '/screen.css')) {
-                        continue;
-                    }
                     $themeName = $theme->getFileName();
                     $targetDir =  $this->themesDir . '/' . $packageName . '/' . $themeName;
                     $this->filesystem->ensureDirectoryExists(dirname($targetDir));
