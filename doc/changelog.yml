@@ -1,4 +1,16 @@
 ---
+3.6.1-RC2:
+  api: 3.6.1-RC2
+  state:
+    release: RC
+    api: RC
+  date: 2026-05-25
+  license:
+    identifier: MIT
+    uri: https://spdx.org/licenses/MIT.html
+  notes: |-
+    fix(themes): remove screen.css gate from theme discovery
+    chore: Update workflow dependency
 3.6.1-RC1:
   api: 3.6.1-RC1
   state:
