@@ -111,4 +111,15 @@ class ThemesCatalog
     {
         return $this->catalog;
     }
+    
+    /**
+     * Clear the in-memory catalog before a full rebuild.
+     *
+     * Callers are expected to re-register all currently installed
+     * theme packages afterwards and call save().
+     */
+    public function reset(): void
+    {
+        $this->catalog = [];
+    }
 }
