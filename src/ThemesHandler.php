@@ -128,9 +128,37 @@ class ThemesHandler
     }
 
     /**
+     * Register a theme package with the catalog.
+     *
+     * Thin wrapper so callers do not have to reach through the
+     * public $themesCatalog property.
+     */
+    public function registerTheme(
+        string $vendorName,
+        string $packageName,
+        string $installDir,
+    ): void {
+        $this->themesCatalog->register($vendorName, $packageName, $installDir);
+    }
+
+    /**
+     * Clear the in-memory catalog before a full rebuild.
+     *
+     * Intended to be paired with a subsequent loop of
+     * {@see registerTheme()} calls, one per currently installed
+     * theme package.
+     */
+    public function resetCatalog(): void
+    {
+        $this->themesCatalog->reset();
+    }
+
+    /**
      * Rebuild the link structure from index
      *
-     * TODO: Unregister themes which are not really installed but indexed
+     * Callers doing a full reconfigure should call
+     * {@see resetCatalog()} beforehand and then register every currently
+     * installed theme package, so stale entries are pruned.
      */
     public function setupThemes(): void
     {
