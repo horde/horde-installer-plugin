@@ -189,6 +189,8 @@ class HordeReconfigureFlow
             $mode,
         );
 
+        $themesHandler->themesCatalog->reset();
+
         foreach ($hordeThemes as $theme) {
             // register
             [$vendorName, $packageName] = explode('/', $theme);
