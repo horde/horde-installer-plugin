@@ -18,7 +18,6 @@ use Horde\Composer\IOAdapter\FlowIoInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Horde\Composer\IOAdapter\SymphonyOutputAdapter;
 use RuntimeException;
-use strncasecmp;
 
 use const PHP_OS;
 
