@@ -6,8 +6,6 @@ namespace Horde\Composer;
 
 use DirectoryIterator;
 use Exception;
-use file_get_contents;
-use json_decode;
 
 /**
  * Encapsulate handling the themes catalog
