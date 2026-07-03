@@ -95,6 +95,14 @@ class ThemesCatalog
         $this->save();
     }
 
+    /**
+     * @deprecated No-op stub. Was never wired to prune individual
+     *             packages. The reconfigure flow now rebuilds the
+     *             catalog wholesale via {@see reset()}. Kept only to
+     *             avoid breaking anyone reaching into this class
+     *             directly; will be removed once the class exits
+     *             `@internal` status.
+     */
     public function unregister(): void
     {
         $this->save();
@@ -109,7 +117,7 @@ class ThemesCatalog
     {
         return $this->catalog;
     }
-    
+
     /**
      * Clear the in-memory catalog before a full rebuild.
      *
