@@ -13,14 +13,13 @@ list: dev
 type: composer-plugin
 homepage: https://github.com/horde/horde-installer-plugin
 authors:
-  -
-    name: Ralf Lang
+  - name: Ralf Lang
     user: rlang
     email: ralf.lang@ralf-lang.de
     active: true
     role: lead
 version:
-  release: 3.6.1-RC2
+  release: 3.6.1-RC3
   api: 3.0.0
 state:
   release: RC
@@ -30,7 +29,7 @@ license:
   uri: https://opensource.org/licenses/MIT
 dependencies:
   required:
-    php: >=8.1
+    php: '>=8.1'
     composer:
       composer-plugin-api: ^2.2.0
   dev:
