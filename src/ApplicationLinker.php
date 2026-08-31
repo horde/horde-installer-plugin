@@ -85,6 +85,9 @@ class ApplicationLinker
                     'static', // static should be ensured to exist in webdir.
                     '.git',
                     '.github',
+                    // Local composer sandbox layout; never part of the app source.
+                    'web',
+                    'var',
                 ],
             ];
 
@@ -153,6 +156,9 @@ class ApplicationLinker
                         'migration',
                         'migrations',
                         'examples',
+                        // Local composer sandbox layout; never part of the app source.
+                        'web',
+                        'var',
                     ],
                 ];
                 $this->filesystem->emptyDirectory($appWebDir, true);
@@ -181,6 +187,12 @@ class ApplicationLinker
                     )) {
                         continue;
                     }
+                    $sourceFile = $appVendorDir . DIRECTORY_SEPARATOR . $relativePathName;
+                    // Skip dangling symlinks and other unreadable entries (Composer
+                    // promotes file_get_contents() warnings to ErrorException).
+                    if (!is_file($sourceFile) || !is_readable($sourceFile)) {
+                        continue;
+                    }
                     $this->filesystem->ensureDirectoryExists($appWebDir . DIRECTORY_SEPARATOR . $relativePath);
                     $reflection = new ReflectionMethod($this->filesystem, 'findShortestPath');
                     if ($reflection->getNumberOfParameters() >= 4) {
@@ -206,7 +218,7 @@ class ApplicationLinker
                         );
                     }
 
-                    $originalContent = file_get_contents($appVendorDir . DIRECTORY_SEPARATOR . $relativePathName);
+                    $originalContent = file_get_contents($sourceFile);
                     if ($originalContent === false) {
                         continue;
                     }
