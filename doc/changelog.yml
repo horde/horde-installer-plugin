@@ -1,4 +1,14 @@
 ---
+3.6.1:
+  api: 3.6.1
+  state:
+    release: stable
+    api: stable
+  date: 2026-11-13
+  license:
+    identifier: MIT
+    uri: https://spdx.org/licenses/MIT.html
+  notes: 'fix(linker): skip sandbox web/var dirs and dangling files'
 3.6.1-RC3:
   api: 3.6.1-RC3
   state:
@@ -8,7 +18,12 @@
   license:
     identifier: MIT
     uri: https://spdx.org/licenses/MIT.html
-  notes: "Merge pull request #22 from horde/fix/themes-catalog-followup\nMerge pull request #27 from Bramvzw/chore/drop-invalid-function-use-imports\nchore: drop invalid class-style use imports for global functions\nrefactor(themes-catalog): encapsulate reset+register on ThemesHandler\nfix(themes-catalog): rebuild themes.json from scratch on each reconfigure run"
+  notes: |-
+    Merge pull request #22 from horde/fix/themes-catalog-followup
+    Merge pull request #27 from Bramvzw/chore/drop-invalid-function-use-imports
+    chore: drop invalid class-style use imports for global functions
+    refactor(themes-catalog): encapsulate reset+register on ThemesHandler
+    fix(themes-catalog): rebuild themes.json from scratch on each reconfigure run
 3.6.1-RC2:
   api: 3.6.1-RC2
   state:
@@ -18,7 +33,9 @@
   license:
     identifier: MIT
     uri: https://spdx.org/licenses/MIT.html
-  notes: "fix(themes): remove screen.css gate from theme discovery\nchore: Update workflow dependency"
+  notes: |-
+    fix(themes): remove screen.css gate from theme discovery
+    chore: Update workflow dependency
 3.6.1-RC1:
   api: 3.6.1-RC1
   state:
@@ -48,7 +65,10 @@
   license:
     identifier: MIT
     uri: https://spdx.org/licenses/MIT.html
-  notes: "test: Unit test for VendorAssetlinker\nfeat: VendorAssetLinker can link assets from external package A due to metadata in horde package B\nfeat: Provide vendor configs as .dist to var/config and cleanup orphans"
+  notes: |-
+    test: Unit test for VendorAssetlinker
+    feat: VendorAssetLinker can link assets from external package A due to metadata in horde package B
+    feat: Provide vendor configs as .dist to var/config and cleanup orphans
 3.4.1:
   api: 3.4.1
   state:
@@ -68,7 +88,9 @@
   license:
     identifier: MIT
     uri: https://spdx.org/licenses/MIT.html
-  notes: "fix: phpstan findings.\nfeat: Dead Symlink cleaner for js/ and themes/ dirs"
+  notes: |-
+    fix: phpstan findings.
+    feat: Dead Symlink cleaner for js/ and themes/ dirs
 3.3.1:
   api: 3.3.1
   state:
@@ -88,7 +110,11 @@
   license:
     identifier: MIT
     uri: https://spdx.org/licenses/MIT.html
-  notes: "fix: Remove self-dependency from composer.json require section\nfeat: Clean up obsolete PHP files after route migrations\nfix: Accept both IOInterface and FlowIoInterface in ConfigLinker\nfix(reconfigure): Redo broken symlinks"
+  notes: |-
+    fix: Remove self-dependency from composer.json require section
+    feat: Clean up obsolete PHP files after route migrations
+    fix: Accept both IOInterface and FlowIoInterface in ConfigLinker
+    fix(reconfigure): Redo broken symlinks
 3.2.0:
   api: 3.2.0
   state:
@@ -98,7 +124,10 @@
   license:
     identifier: MIT
     uri: https://spdx.org/licenses/MIT.html
-  notes: "feat: Clean up obsolete PHP files after route migrations\nfix: Accept both IOInterface and FlowIoInterface in ConfigLinker\nfix(reconfigure): Redo broken symlinks"
+  notes: |-
+    feat: Clean up obsolete PHP files after route migrations
+    fix: Accept both IOInterface and FlowIoInterface in ConfigLinker
+    fix(reconfigure): Redo broken symlinks
 3.1.0:
   api: 3.1.0
   state:
@@ -128,4 +157,7 @@
   license:
     identifier: MIT
     uri: https://spdx.org/licenses/MIT.html
-  notes: "Make proxy mode the new default.\nProvide new --force command for fixing broken installations.\nAdd new parameter --webroot    fix(forms): declare $_completedVar property to fix PHP 8.2+ deprecation"
+  notes: |-
+    Make proxy mode the new default.
+    Provide new --force command for fixing broken installations.
+    Add new parameter --webroot    fix(forms): declare $_completedVar property to fix PHP 8.2+ deprecation
