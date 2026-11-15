@@ -19,10 +19,10 @@ authors:
     active: true
     role: lead
 version:
-  release: 3.6.1
+  release: 3.7.0-alpha
   api: 3.0.0
 state:
-  release: stable
+  release: alpha
   api: stable
 license:
   identifier: MIT
